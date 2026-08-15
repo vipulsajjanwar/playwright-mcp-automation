@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  playwright-tests:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      - ENV=qa
+      - BROWSER=chromium
+      - HEADLESS=true
+    volumes:
+      - ../target/reports:/app/target/reports
+      - ../target/traces:/app/target/traces
+      - ../target/screenshots:/app/target/screenshots

@@ -1,0 +1,27 @@
+# Target & Build outputs
+/target/
+/*.log
+/logs/
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Playwright artifacts
+/target/traces/
+/target/screenshots/
+/target/reports/
+/target/videos/
+test-output/
+
+# Config secrets
+*.secret
+*.env.local
