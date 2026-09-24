@@ -948,5 +948,4 @@ public abstract class BasePage {
         boolean getAsBoolean();
     }
 
-
 }
