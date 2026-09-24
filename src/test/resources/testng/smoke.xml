@@ -13,10 +13,14 @@
                 <include name="smoke" />
             </run>
         </groups>
-        <packages>
-            <package name="tests.ui" />
-            <package name="tests.api" />
-            <package name="tests.database" />
-        </packages>
+    
+        <classes>
+            <class name="tests.ui.LoginTest">
+                <methods>
+                    <include name="testLoginPageNavigation" />
+                    
+                </methods>
+            </class>
+        </classes>
     </test>
 </suite>

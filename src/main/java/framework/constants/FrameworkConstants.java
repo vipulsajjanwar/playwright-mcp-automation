@@ -17,4 +17,6 @@ public final class FrameworkConstants {
 
     public static final int DEFAULT_TIMEOUT_MS = 30000;
     public static final int DEFAULT_NAVIGATION_TIMEOUT_MS = 60000;
+
+    public static final boolean HIGHLIGHT_WEB_ELEMENTS = true;
 }

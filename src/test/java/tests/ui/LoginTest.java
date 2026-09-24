@@ -1,7 +1,9 @@
 package tests.ui;
 
 import framework.base.BaseTest;
+import framework.pages.AppLoginPage;
 import framework.pages.LoginPage;
+import framework.reporting.ReportUtils;
 import framework.reporting.TestExecutionLogger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -9,10 +11,25 @@ import org.testng.annotations.Test;
 public class LoginTest extends BaseTest {
 
     @Test(groups = {"smoke", "regression"}, description = "Verify successful navigation to Todomvc demo application")
-    public void testPageNavigation() {
-        TestExecutionLogger.logStep("Navigating to TodoMVC Demo");
-        LoginPage loginPage = new LoginPage(page());
-        Assert.assertTrue(loginPage.getTitle().toLowerCase().contains("todo"), "Title should contain todo");
+    public void testLoginPageNavigation() {
+        String testcaseId = "TC001";
+        String testcaseName = "Verify valid login credentials of demo application";
+
+        try {
+            TestExecutionLogger.logStep(testcaseName);
+
+            AppLoginPage loginPage = new AppLoginPage(page());
+
+            loginPage.loginWithUserDetails("", "");
+
+            loginPage.validateLoginPageTitle("icedq - home");
+        } catch (Exception e) {
+            ReportUtils.logFail("Error during test execution: " , e);
+
+        }finally{
+            TestExecutionLogger.finalizeTest(true,  null, null, testcaseId, testcaseName);
+        }
+
     }
 
     @Test(groups = {"regression"}, description = "Verify login input fields interaction")

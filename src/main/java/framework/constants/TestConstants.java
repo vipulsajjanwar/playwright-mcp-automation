@@ -11,4 +11,10 @@ public final class TestConstants {
     public static final String API = "api";
     public static final String DATABASE = "database";
     public static final String INTEGRATION = "integration";
+
+    public static int NUMBEROFFAILURES = 0;
+    public static int NUMBEROFSKIPS = 0;
+    public static int NUMBEROFPASSES = 0;
+
+    public static String SuiteName = "";
 }

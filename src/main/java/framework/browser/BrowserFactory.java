@@ -9,6 +9,8 @@ import framework.exceptions.BrowserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class BrowserFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(BrowserFactory.class);
@@ -34,6 +36,7 @@ public class BrowserFactory {
 
         BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
                 .setHeadless(headless)
+                .setArgs(List.of("--start-maximized"))
                 .setSlowMo(slowMo);
 
         try {

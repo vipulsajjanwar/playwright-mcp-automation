@@ -1,6 +1,8 @@
 package framework.utils;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import framework.constants.FrameworkConstants;
 import framework.exceptions.FrameworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,5 +47,60 @@ public class PageUtils {
     public static Object evaluateJs(Page page, String script) {
         logger.debug("Evaluating JS script: {}", script);
         return page.evaluate(script);
+    }
+
+    public static void highlightElement(Locator element) {
+        if (!FrameworkConstants.HIGHLIGHT_WEB_ELEMENTS) {
+            return;
+        }
+
+        element.evaluate(
+                """
+                element => {
+                    // Restore previously highlighted element
+                    if (window.__highlightedElement) {
+                        const old = window.__highlightedElement;
+    
+                        old.style.outline = old.__originalOutline || '';
+                        old.style.boxShadow = old.__originalBoxShadow || '';
+    
+                        window.__highlightedElement = null;
+                    }
+    
+                    // Store original styles
+                    element.__originalOutline = element.style.outline;
+                    element.__originalBoxShadow = element.style.boxShadow;
+    
+                    // Scroll element into center of viewport
+                    element.scrollIntoView({
+                        block: 'center',
+                        inline: 'center',
+                        behavior: 'instant'
+                    });
+    
+                    // Highlight
+                    element.style.outline = '3px solid orange';
+                    element.style.boxShadow = '0 0 10px orange';
+    
+                    window.__highlightedElement = element;
+    
+                    // Clear previous timer
+                    clearTimeout(window.__highlightTimer);
+    
+                    // Remove highlight after 500ms
+                    window.__highlightTimer = setTimeout(() => {
+                        if (window.__highlightedElement === element) {
+                            element.style.outline =
+                                element.__originalOutline || '';
+    
+                            element.style.boxShadow =
+                                element.__originalBoxShadow || '';
+    
+                            window.__highlightedElement = null;
+                        }
+                    }, 500);
+                }
+                """
+        );
     }
 }

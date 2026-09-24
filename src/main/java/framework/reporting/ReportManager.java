@@ -6,6 +6,7 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import framework.config.ConfigManager;
 import framework.constants.FrameworkConstants;
+import framework.constants.TestConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class ReportManager {
 
     private ReportManager() {}
 
-    public static synchronized ExtentReports getExtentReports() {
+    public static synchronized ExtentReports getExtentReports(String reportName) {
         if (extentReports == null) {
             String reportPath = FrameworkConstants.EXTENT_REPORT_PATH;
             File reportFile = new File(reportPath);
@@ -31,7 +32,7 @@ public class ReportManager {
 
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
             sparkReporter.config().setDocumentTitle("Enterprise Automation Execution Report");
-            sparkReporter.config().setReportName("Playwright Java Test Automation Suite");
+            sparkReporter.config().setReportName(reportName);
             sparkReporter.config().setTheme(Theme.DARK);
 
             extentReports = new ExtentReports();
@@ -47,7 +48,7 @@ public class ReportManager {
     }
 
     public static synchronized ExtentTest createTest(String testName, String description) {
-        ExtentTest test = getExtentReports().createTest(testName, description);
+        ExtentTest test = getExtentReports(TestConstants.SuiteName).createTest(testName, description);
         testMap.put(Thread.currentThread().getId(), test);
         return test;
     }

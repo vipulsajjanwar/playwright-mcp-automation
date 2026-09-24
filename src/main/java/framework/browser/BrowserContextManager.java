@@ -18,13 +18,15 @@ public class BrowserContextManager {
     public static BrowserContext createContext(Browser browser) {
         try {
             Browser.NewContextOptions options = new Browser.NewContextOptions()
-                    .setViewportSize(
-                            ConfigManager.getInt("viewport.width", BrowserConstants.DEFAULT_VIEWPORT_WIDTH),
-                            ConfigManager.getInt("viewport.height", BrowserConstants.DEFAULT_VIEWPORT_HEIGHT)
-                    )
+                    .setViewportSize(null)
+//                    .setViewportSize(
+//                            ConfigManager.getInt("viewport.width", BrowserConstants.DEFAULT_VIEWPORT_WIDTH),
+//                            ConfigManager.getInt("viewport.height", BrowserConstants.DEFAULT_VIEWPORT_HEIGHT)
+//                    )
                     .setLocale(ConfigManager.get("locale", BrowserConstants.DEFAULT_LOCALE))
                     .setTimezoneId(ConfigManager.get("timezone", BrowserConstants.DEFAULT_TIMEZONE))
-                    .setAcceptDownloads(true);
+                    .setAcceptDownloads(true)
+                    .setIgnoreHTTPSErrors(true);
 
             boolean videoEnabled = ConfigManager.getBoolean("video.enabled", false);
             if (videoEnabled) {

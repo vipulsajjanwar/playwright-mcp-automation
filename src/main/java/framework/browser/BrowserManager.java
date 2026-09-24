@@ -41,6 +41,7 @@ public class BrowserManager {
     public static void initThreadSession() {
         Browser browser = BrowserFactory.getBrowser();
         BrowserContext context = BrowserContextManager.createContext(browser);
+
         Page page = context.newPage();
         setContextAndPage(context, page);
     }

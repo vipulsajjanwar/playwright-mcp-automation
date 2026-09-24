@@ -1,5 +1,6 @@
 package framework.listeners;
 
+import framework.constants.TestConstants;
 import framework.reporting.ReportManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ public class SuiteListener implements ISuiteListener {
     @Override
     public void onStart(ISuite suite) {
         logger.info("================ Starting Test Suite: {} ================", suite.getName());
+        TestConstants.SuiteName = suite.getName();
     }
 
     @Override
