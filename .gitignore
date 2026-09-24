@@ -25,3 +25,5 @@ test-output/
 # Config secrets
 *.secret
 *.env.local
+
+reports/
