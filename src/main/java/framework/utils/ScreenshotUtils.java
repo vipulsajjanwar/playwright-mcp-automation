@@ -1,6 +1,7 @@
 package framework.utils;
 
 import com.microsoft.playwright.Page;
+import framework.config.ConfigManager;
 import framework.constants.FrameworkConstants;
 import framework.exceptions.FrameworkException;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class ScreenshotUtils {
                 Files.createDirectories(targetDir);
             }
 
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS"));
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(ConfigManager.get("timestamp.format")));
             String fileName = String.format("%s_%s_%d.png", sanitizeName(testName), timestamp, Thread.currentThread().getId());
             Path screenshotPath = targetDir.resolve(fileName);
 

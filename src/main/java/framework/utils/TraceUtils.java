@@ -47,7 +47,7 @@ public class TraceUtils {
                     Files.createDirectories(targetDir);
                 }
 
-                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS"));
+                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(ConfigManager.get("timestamp.format")));
                 String fileName = String.format("%s_%s_%d.zip", sanitizeName(testName), timestamp, Thread.currentThread().getId());
                 Path tracePath = targetDir.resolve(fileName);
 

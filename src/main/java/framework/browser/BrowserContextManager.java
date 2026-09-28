@@ -24,7 +24,7 @@ public class BrowserContextManager {
 //                            ConfigManager.getInt("viewport.height", BrowserConstants.DEFAULT_VIEWPORT_HEIGHT)
 //                    )
                     .setLocale(ConfigManager.get("locale", BrowserConstants.DEFAULT_LOCALE))
-                    .setTimezoneId(ConfigManager.get("timezone", BrowserConstants.DEFAULT_TIMEZONE))
+                    .setTimezoneId(ConfigManager.get("time.zone", BrowserConstants.DEFAULT_TIMEZONE))
                     .setAcceptDownloads(true)
                     .setIgnoreHTTPSErrors(true);
 

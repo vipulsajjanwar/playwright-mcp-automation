@@ -1,4 +1,4 @@
-package framework.pages;
+package com.icedq;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -7,9 +7,9 @@ import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import com.microsoft.playwright.options.WaitUntilState;
 import framework.base.BasePage;
-import framework.config.ConfigManager;
 import framework.excel.ExcelReader;
 import framework.reporting.ReportUtils;
+import io.qameta.allure.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +115,7 @@ public class AppLoginPage extends BasePage {
     // ==================================================================
     // LOGIN
     // ==================================================================
-
+    @Step("Login with user details: {username}")
     public boolean loginWithUserDetails(
             String url,
             String appUser
@@ -338,7 +338,7 @@ public class AppLoginPage extends BasePage {
             }
         }
     }
-
+    @Step("Login to application with user: {username}")
     public boolean enterUserNameAndPasswordToSignIn(String username, String password) {
         try {
             if (username == null || username.isBlank()) {
@@ -365,7 +365,7 @@ public class AppLoginPage extends BasePage {
             return false;
         }
     }
-
+    @Step("Enter new password and confirm to sign in")
     public boolean enterNewPasswordToSignIn(String password) {
         try {
             if (password == null || password.isBlank()) {
@@ -392,7 +392,7 @@ public class AppLoginPage extends BasePage {
     // ==================================================================
     // LOGIN PAGE / CERTIFICATE / POPUP RECOVERY
     // ==================================================================
-
+    @Step("Handle certificate or popup recovery if present")
     public boolean checkForUserNameOnPage(String url) {
         for (int attempt = 1; attempt <= MAX_PAGE_RETRY; attempt++) {
             try {
@@ -447,7 +447,7 @@ public class AppLoginPage extends BasePage {
 
         return isVisible(userName, 5_000);
     }
-
+    @Step("Handle browser certificate validation if present")
     public void navigateToURL(String url, int timeoutMinutes) {
         if (url == null || url.isBlank()) {
             throw new IllegalArgumentException("Application URL cannot be null or empty.");
@@ -477,13 +477,14 @@ public class AppLoginPage extends BasePage {
     }
 
     public void checkForField(Locator locator, String successMessage, String errorMessage) {
+
         if (isVisible(locator, 5_000)) {
-           ReportUtils.logPass(successMessage);
+           ReportUtils.logInfo(successMessage);
         } else {
            ReportUtils.logFail(errorMessage, "checkForField", page);
         }
     }
-
+    @Step("Handle all permutations for login recovery")
     public boolean navigateToAppPage() {
         try {
             // Browser certificate warning.
@@ -894,7 +895,7 @@ public class AppLoginPage extends BasePage {
         }
         return selector;
     }
-
+    @Step("Verify Login page title is displayed")
     public void validateLoginPageTitle(String expectedTitle) {
         validateTitle(expectedTitle, "Login page title validation", "equalsIgnoreCase");
     }

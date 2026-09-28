@@ -1,6 +1,7 @@
 package framework.reporting;
 
 import framework.constants.TestConstants;
+import io.qameta.allure.Allure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.SkipException;
@@ -28,6 +29,9 @@ public class TestExecutionLogger {
 
         // Check if the test should be skipped
         if (!loginFlag) {
+            Allure.step("Test skipped : " + testcaseId, () -> {
+                throw new SkipException("Test skipped : " + testcaseId);
+            });
             throw new SkipException("Test skipped : " + testcaseId);
         }
 
@@ -39,12 +43,27 @@ public class TestExecutionLogger {
 
         // Check for skipped tests
         if (TestConstants.NUMBEROFSKIPS > 0) {
+            Allure.step("Test skipped : " + testcaseId, () -> {
+                throw new SkipException("Test skipped : " + testcaseId);
+            });
             throw new SkipException("Test skipped : " + testcaseId);
+
         }
 
         // Check for failed tests
         if (TestConstants.NUMBEROFFAILURES > 0) {
+            Allure.step("Test Failed : " + testcaseId, () -> {
+                throw new AssertionError("Test Failed : " + testcaseId);
+            });
              throw new AssertionError(testcaseId+" : " + testcaseName + " failed. Please check the report for details.");
         }
+    }
+
+    public static void OnStartTest(String testcaseId, String testcaseName) {
+        String logMsg = String.format("[START TEST] [Thread-%d] Testcase ID: %s, Testcase Name: %s",
+                Thread.currentThread().getId(), testcaseId, testcaseName);
+        logger.info(logMsg);
+        ReportManager.createTest(testcaseId, testcaseName != null ? testcaseName : testcaseId);
+        ReportUtils.logInfo(logMsg);
     }
 }

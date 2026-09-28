@@ -6,8 +6,12 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.microsoft.playwright.Page;
+import framework.config.ConfigManager;
+import framework.constants.FrameworkConstants;
 import framework.constants.TestConstants;
 import framework.exceptions.FrameworkException;
+import framework.utils.AllureUtils;
+import io.qameta.allure.Allure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Reporter;
@@ -24,13 +28,17 @@ public class ReportUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportUtils.class);
 
-    private ReportUtils() {}
+    private ReportUtils() {
+    }
 
     public static void logInfo(String message) {
-        logger.info("[INFO] {}",message);
+        logger.info("[INFO] {}", message);
         ExtentTest test = ReportManager.getTest();
         if (test != null) {
             test.log(Status.INFO, MarkupHelper.createLabel(message, ExtentColor.TRANSPARENT));
+        }
+        if (AllureUtils.isEnabled()) {
+            AllureUtils.attachLog("INFO", message);
         }
     }
 
@@ -40,13 +48,22 @@ public class ReportUtils {
         if (test != null) {
             test.log(Status.PASS, MarkupHelper.createLabel(message, ExtentColor.GREEN));
         }
+        if (AllureUtils.isEnabled()) {
+            AllureUtils.attachLog("PASS", message);
+        }
     }
 
     public static void logFail(String message, Throwable throwable) {
         logger.error("[FAIL] {}", message, throwable);
+        TestConstants.NUMBEROFFAILURES++;
         ExtentTest test = ReportManager.getTest();
         if (test != null) {
             test.log(Status.FAIL, MarkupHelper.createLabel(message, ExtentColor.RED));
+        }
+        if (AllureUtils.isEnabled()) {
+            AllureUtils.attachLog("FAIL", message);
+            AllureUtils.attachStackTrace("Stack trace", throwable);
+            Allure.getLifecycle().updateStep(s -> s.setStatus(io.qameta.allure.model.Status.FAILED));
         }
     }
 
@@ -56,8 +73,18 @@ public class ReportUtils {
             ExtentTest test = ReportManager.getTest();
             if (test != null) {
                 String screenshotPath = takeScreenshotForValidationFailure(sanitizeFilename(throwable), page);
-                test.log(Status.FAIL,  message+ "::::::::",
-                        MediaEntityBuilder.createScreenCaptureFromBase64String(screenshotPath).build());
+                test.log(Status.FAIL, message + "::::::::", MediaEntityBuilder.createScreenCaptureFromBase64String(screenshotPath).build());
+            }
+            TestConstants.NUMBEROFFAILURES++;
+            if (AllureUtils.isEnabled()) {
+                AllureUtils.attachLog("FAIL", message);
+                AllureUtils.attachStackTrace("Stack trace", new FrameworkException(throwable));
+                if (page != null) {
+                    AllureUtils.attachScreenshot("Screenshot on failure",
+                            page.screenshot(new Page.ScreenshotOptions().setFullPage(true)));
+                    AllureUtils.attachLog("Page URL", page.url());
+                    AllureUtils.attachLog("Page HTML", "<pre>" + AllureUtils.escape(page.content()) + "</pre>");
+                }
             }
         } catch (IOException e) {
             logger.error("Failed to capture screenshot for validation failure: {}", e.getMessage(), e);
@@ -66,12 +93,19 @@ public class ReportUtils {
 
     public static void logError(Exception e, String message) {
         logger.error("[ERROR] {}", message, e);
+        TestConstants.NUMBEROFSKIPS++;
         ExtentTest test = ReportManager.getTest();
         if (test != null) {
 
             test.log(Status.FAIL, message);
             if (e != null) {
                 test.log(Status.FAIL, e);
+            }
+        }
+        if (AllureUtils.isEnabled()) {
+            AllureUtils.attachLog("ERROR", message);
+            if (e != null) {
+                AllureUtils.attachStackTrace("Stack trace", e);
             }
         }
     }
@@ -85,20 +119,24 @@ public class ReportUtils {
                 logger.error("Failed to attach screenshot to report", e);
             }
         }
+        if (AllureUtils.isEnabled() && screenshotPath != null && !screenshotPath.isEmpty()) {
+            try {
+                byte[] screenshotBytes = Files.readAllBytes(Paths.get(screenshotPath));
+                AllureUtils.attachScreenshot(title, screenshotBytes);
+            } catch (IOException e) {
+                logger.error("Failed to attach screenshot to Allure report", e);
+            }
+        }
     }
 
     public static String takeScreenshotForValidationFailure(
             String methodName,
             Page page) throws IOException {
 
-        String timestamp = new SimpleDateFormat("HH.mm.ss-MM-dd-yyyy")
+        String timestamp = new SimpleDateFormat(ConfigManager.get("timestamp.format"))
                 .format(new Date());
 
-        Path screenshotDir = Paths.get(
-                "reports",
-                "Screenshots",
-                methodName
-        );
+        Path screenshotDir = Paths.get(FrameworkConstants.SCREENSHOT_DIR, methodName);
 
         Files.createDirectories(screenshotDir);
 

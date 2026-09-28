@@ -1,22 +1,33 @@
 package framework.constants;
 
+import framework.config.ConfigManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public final class FrameworkConstants {
 
     private FrameworkConstants() {}
+
+    static String timestamp = new SimpleDateFormat(ConfigManager.get("timestamp.format"))
+            .format(new Date());
 
     public static final String DEFAULT_ENV = "qa";
     public static final String CONFIG_DIR = "src/test/resources/config/";
     public static final String DEFAULT_CONFIG_PATH = CONFIG_DIR + "config.properties";
 
-    public static final String REPORT_DIR = "target/reports";
-    public static final String EXTENT_REPORT_PATH = REPORT_DIR + "/ExtentReport.html";
-    public static final String TRACE_DIR = "target/traces";
-    public static final String SCREENSHOT_DIR = "target/screenshots";
-    public static final String VIDEO_DIR = "target/videos";
-    public static final String LOG_DIR = "target/logs";
+    public static final String REPORT_DIR = "reports/"+TestConstants.ReportName;
+    public static final String REPORT_NAME = TestConstants.ReportName+"_"+ timestamp +".html";
+    public static final String EXTENT_REPORT_PATH = REPORT_DIR+"/"+REPORT_NAME;
+    public static final String TRACE_DIR = REPORT_DIR+"/traces";
+    public static final String SCREENSHOT_DIR = REPORT_DIR+"/screenshots";
+    public static final String VIDEO_DIR = REPORT_DIR+"/videos";
+    public static final String LOG_DIR = REPORT_DIR+"/logs";
 
     public static final int DEFAULT_TIMEOUT_MS = 30000;
     public static final int DEFAULT_NAVIGATION_TIMEOUT_MS = 60000;
 
     public static final boolean HIGHLIGHT_WEB_ELEMENTS = true;
+
+
 }

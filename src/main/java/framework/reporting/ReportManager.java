@@ -4,6 +4,7 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
+import com.aventstack.extentreports.reporter.configuration.ViewName;
 import framework.config.ConfigManager;
 import framework.constants.FrameworkConstants;
 import framework.constants.TestConstants;
@@ -31,9 +32,20 @@ public class ReportManager {
             }
 
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
-            sparkReporter.config().setDocumentTitle("Enterprise Automation Execution Report");
+            sparkReporter.config().setDocumentTitle("Playwright Automation Execution Report");
             sparkReporter.config().setReportName(reportName);
             sparkReporter.config().setTheme(Theme.DARK);
+            sparkReporter.viewConfigurer()
+                    .viewOrder()
+                    .as(new ViewName[] {
+                            ViewName.DASHBOARD,
+                            ViewName.TEST,
+                            ViewName.AUTHOR,
+                            ViewName.DEVICE,
+                            ViewName.EXCEPTION,
+                            ViewName.LOG
+                    })
+                    .apply();
 
             extentReports = new ExtentReports();
             extentReports.attachReporter(sparkReporter);
@@ -41,6 +53,7 @@ public class ReportManager {
             extentReports.setSystemInfo("Java Version", System.getProperty("java.version"));
             extentReports.setSystemInfo("Environment", ConfigManager.get("env", "qa"));
             extentReports.setSystemInfo("Browser", ConfigManager.get("browser", "chromium"));
+            extentReports.setSystemInfo("APP URL", ConfigManager.get("baseUrl", "http://localhost:3000"));
 
             logger.info("Initialized ExtentReports at: {}", reportPath);
         }

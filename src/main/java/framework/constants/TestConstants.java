@@ -15,6 +15,21 @@ public final class TestConstants {
     public static int NUMBEROFFAILURES = 0;
     public static int NUMBEROFSKIPS = 0;
     public static int NUMBEROFPASSES = 0;
+    public static int TOTALTESTCASES = 0;
+
+    public static int testCount = 0;
+    public static int passedTC=0;
+    public static int failedTC=0;
+    public static int skippedTC=0;
 
     public static String SuiteName = "";
+    public static String ReportName = "";
+
+    public static String startTime = "";
+    public static String endTime = "";
+
+    public static String BaseURL = "";
+
+    public static String ExecutionID = "";
+
 }

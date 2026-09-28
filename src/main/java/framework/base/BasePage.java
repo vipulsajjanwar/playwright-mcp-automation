@@ -24,6 +24,7 @@ import java.util.List;
 
 import framework.reporting.ReportUtils;
 import framework.utils.PageUtils;
+import io.qameta.allure.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -913,7 +914,7 @@ public abstract class BasePage {
 
         validateText(actual, expected, elementName, type);
     }
-
+    @Step("Validate text of {elementName} is {type} [{expected}]")
     protected void validateText(String actual, String expected, String elementName, String type) {
         try {
             ReportUtils.logInfo(elementName + " actual text: [" + actual + "]");
@@ -929,7 +930,7 @@ public abstract class BasePage {
             }
 
             if (!isMatch) {
-                ReportUtils.logFail("Not matched", "validateText", page);
+                ReportUtils.logFail(elementName + " text mismatch. Expected: [" + expected + "] Actual: [" + actual + "]", "validateText", page);
             }else{
                 logger.info("{} text matches. Expected: [{}] Actual: [{}]", elementName, expected, actual);
                 ReportUtils.logPass(elementName + " text matches. Expected: [" + expected + "] Actual: [" + actual + "]");

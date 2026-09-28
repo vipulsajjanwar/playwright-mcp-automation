@@ -1,22 +1,28 @@
 package tests.ui;
 
 import framework.base.BaseTest;
-import framework.pages.AppLoginPage;
+import com.icedq.AppLoginPage;
 import framework.pages.LoginPage;
 import framework.reporting.ReportUtils;
 import framework.reporting.TestExecutionLogger;
+import io.qameta.allure.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
+@Epic("Administration")
+@Feature("Login")
 public class LoginTest extends BaseTest {
 
-    @Test(groups = {"smoke", "regression"}, description = "Verify successful navigation to Todomvc demo application")
+    @Story("Verify that a user can successfully log in with valid credentials")
+    @Severity(SeverityLevel.BLOCKER)
+    @Issue("ICEDQ-12345")
+    @Owner("Your Name")
+    @Description("This test verifies that a user can successfully log in with valid credentials.")
+    @Test(groups = {"smoke", "regression"}, description = "Verify successful navigation to demo application")
     public void testLoginPageNavigation() {
         String testcaseId = "TC001";
         String testcaseName = "Verify valid login credentials of demo application";
-
+        TestExecutionLogger.OnStartTest(testcaseId, testcaseName);
         try {
-            TestExecutionLogger.logStep(testcaseName);
 
             AppLoginPage loginPage = new AppLoginPage(page());
 
