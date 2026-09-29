@@ -11,6 +11,7 @@ import framework.constants.FrameworkConstants;
 import framework.constants.TestConstants;
 import framework.exceptions.FrameworkException;
 import framework.utils.AllureUtils;
+import framework.utils.ChainTestUtil;
 import io.qameta.allure.Allure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,9 @@ public class ReportUtils {
         if (AllureUtils.isEnabled()) {
             AllureUtils.attachLog("INFO", message);
         }
+        if (ChainTestUtil.isEnabled()) {
+            ChainTestUtil.info(message);
+        }
     }
 
     public static void logPass(String message) {
@@ -50,6 +54,9 @@ public class ReportUtils {
         }
         if (AllureUtils.isEnabled()) {
             AllureUtils.attachLog("PASS", message);
+        }
+        if (ChainTestUtil.isEnabled()) {
+            ChainTestUtil.pass(message);
         }
     }
 
@@ -65,14 +72,18 @@ public class ReportUtils {
             AllureUtils.attachStackTrace("Stack trace", throwable);
             Allure.getLifecycle().updateStep(s -> s.setStatus(io.qameta.allure.model.Status.FAILED));
         }
+        if (ChainTestUtil.isEnabled()) {
+            ChainTestUtil.fail(message, throwable);
+        }
     }
 
     public static void logFail(String message, String throwable, Page page) {
         logger.error("[FAIL] {} {}", message, throwable);
         try {
+            String screenshotPath = null;
             ExtentTest test = ReportManager.getTest();
             if (test != null) {
-                String screenshotPath = takeScreenshotForValidationFailure(sanitizeFilename(throwable), page);
+                screenshotPath = takeScreenshotForValidationFailure(sanitizeFilename(throwable), page);
                 test.log(Status.FAIL, message + "::::::::", MediaEntityBuilder.createScreenCaptureFromBase64String(screenshotPath).build());
             }
             TestConstants.NUMBEROFFAILURES++;
@@ -86,6 +97,18 @@ public class ReportUtils {
                     AllureUtils.attachLog("Page HTML", "<pre>" + AllureUtils.escape(page.content()) + "</pre>");
                 }
             }
+
+            if (ChainTestUtil.isEnabled()) {
+                ChainTestUtil.fail(message, new FrameworkException(throwable));
+                Path screenshotDir = Paths.get(FrameworkConstants.SCREENSHOT_DIR, throwable);
+                Files.createDirectories(screenshotDir);
+                ChainTestUtil.attachImage("Screenshot on failure", page.screenshot(
+                        new Page.ScreenshotOptions()
+                                .setPath(screenshotDir)
+                                .setFullPage(true)
+                ));
+            }
+
         } catch (IOException e) {
             logger.error("Failed to capture screenshot for validation failure: {}", e.getMessage(), e);
         }

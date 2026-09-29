@@ -1,7 +1,8 @@
-package tests.ui;
+package tests.icedq.admin;
 
 import framework.base.BaseTest;
-import com.icedq.AppLoginPage;
+import com.icedq.admin.AppLoginPage;
+
 import framework.pages.LoginPage;
 import framework.reporting.ReportUtils;
 import framework.reporting.TestExecutionLogger;

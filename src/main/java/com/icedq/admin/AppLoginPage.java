@@ -1,4 +1,4 @@
-package com.icedq;
+package com.icedq.admin;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;

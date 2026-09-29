@@ -9,7 +9,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Enterprise Playwright Java Automation Framework</name>
+    <name>Playwright Java Automation Framework</name>
     <description>Enterprise-grade Java + Playwright + TestNG + API + DB + AI + MCP Automation Framework</description>
 
     <properties>
@@ -33,6 +33,7 @@
         <javax.mail.version>1.4.6</javax.mail.version>
         <allure.version>2.29.1</allure.version>
         <aspectj.version>1.9.25.1</aspectj.version>
+        <chaintest.testng.version>1.0.12</chaintest.testng.version>
         <env>qa</env>
 
     </properties>
@@ -140,6 +141,11 @@
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-testng</artifactId>
             <version>${allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>chaintest-testng</artifactId>
+            <version>${chaintest.testng.version}</version>
         </dependency>
 
     </dependencies>

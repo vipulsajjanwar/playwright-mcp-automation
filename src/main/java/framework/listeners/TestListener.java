@@ -29,6 +29,17 @@ public class TestListener implements ITestListener {
         tStartTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
        // ReportManager.createTest(testName, description != null ? description : testName);
         TestConstants.testCount++;
+
+        ChainTestListener.startTest(
+                result.getMethod()
+                        .getMethodName()
+        );
+
+        ChainTestListener.addBrowser(ConfigManager.get("browser"));
+        ChainTestListener.addEnvironment(ConfigManager.get("env"));
+        ChainTestListener.addTestClass(
+                getClass().getSimpleName()
+        );
     }
 
     @Override
@@ -39,6 +50,7 @@ public class TestListener implements ITestListener {
         tendTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
         ReportUtils.logInfo(timeLog + CustomTimeUtil.getTimeDifference(tStartTime, tendTime, timeFormat));
         TestConstants.passedTC++;
+        ChainTestListener.passTest();
     }
 
     @Override
@@ -49,6 +61,7 @@ public class TestListener implements ITestListener {
         tendTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
         ReportUtils.logInfo(timeLog + CustomTimeUtil.getTimeDifference(tStartTime, tendTime, timeFormat));
         TestConstants.failedTC++;
+        ChainTestListener.failTest(result.getThrowable(), BrowserManager.getPage());
         try {
             if (BrowserManager.getPage() != null && !BrowserManager.getPage().isClosed()) {
                 String screenshotPath = ScreenshotUtils.captureScreenshot(BrowserManager.getPage(), testName);
@@ -69,6 +82,7 @@ public class TestListener implements ITestListener {
         tendTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
         ReportUtils.logInfo(timeLog + CustomTimeUtil.getTimeDifference(tStartTime, tendTime, timeFormat));
         TestConstants.skippedTC++;
+        ChainTestListener.skipTest(result.getThrowable().toString());
     }
 
     @Override
@@ -83,5 +97,6 @@ public class TestListener implements ITestListener {
 
         logger.info("Finished Context/Test Tag: {}", context.getName());
         TestConstants.endTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
+
     }
 }

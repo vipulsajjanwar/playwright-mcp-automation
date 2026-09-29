@@ -9,7 +9,7 @@
 
     <test name="Parallel UI &amp; API Methods Execution">
         <classes>
-            <class name="tests.ui.LoginTest" />
+            <class name="tests.icedq.admin.LoginTest" />
             <class name="tests.ui.UserCreationTest" />
             <class name="tests.ui.DropdownTest" />
             <class name="tests.ui.TableTest" />

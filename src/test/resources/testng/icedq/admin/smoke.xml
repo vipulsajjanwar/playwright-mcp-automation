@@ -6,6 +6,7 @@
         <listener class-name="framework.listeners.SuiteListener" />
         <listener class-name="framework.listeners.AnnotationTransformer" />
         <listener class-name="framework.listeners.AllureTestListener"/>
+        <listener class-name="framework.listeners.ChainTestListener"/>
 
     </listeners>
 
@@ -19,7 +20,7 @@
         </groups>
     
         <classes>
-            <class name="tests.ui.LoginTest">
+            <class name="tests.icedq.admin.LoginTest">
                 <methods>
                     <include name="testLoginPageNavigation" />
                     

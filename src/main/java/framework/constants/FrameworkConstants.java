@@ -15,6 +15,7 @@ public final class FrameworkConstants {
     public static final String DEFAULT_ENV = "qa";
     public static final String CONFIG_DIR = "src/test/resources/config/";
     public static final String DEFAULT_CONFIG_PATH = CONFIG_DIR + "config.properties";
+    public static final String CHAINTEST_CONFIG_PATH = CONFIG_DIR + "chaintest.properties";
 
     public static final String REPORT_DIR = "reports/"+TestConstants.ReportName;
     public static final String REPORT_NAME = TestConstants.ReportName+"_"+ timestamp +".html";
