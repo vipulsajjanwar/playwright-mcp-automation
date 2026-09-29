@@ -1,23 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <property name="REPORT_DIR" value="${REPORT_DIR:-reports}"/>
+    <property name="SUITE_NAME" value="${SUITE_NAME:-default}" />
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
         </encoder>
+
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>target/logs/framework.log</file>
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>
+            ${REPORT_DIR}/log/ExecutionLog.log
+        </file>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>target/logs/framework-%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <fileNamePattern>
+                ${REPORT_DIR}/log/framework-%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+
             <maxHistory>30</maxHistory>
+
         </rollingPolicy>
+
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
         </encoder>
+
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </root>
+
 </configuration>

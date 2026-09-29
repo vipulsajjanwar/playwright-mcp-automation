@@ -115,7 +115,7 @@ public class AppLoginPage extends BasePage {
     // ==================================================================
     // LOGIN
     // ==================================================================
-    @Step("Login with user details: {username}")
+    @Step("Login with user details")
     public boolean loginWithUserDetails(
             String url,
             String appUser

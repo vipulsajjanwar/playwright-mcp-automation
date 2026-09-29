@@ -1,5 +1,6 @@
 package framework.listeners;
 
+import com.microsoft.playwright.Page;
 import framework.browser.BrowserManager;
 import framework.config.ConfigManager;
 import framework.constants.TestConstants;
@@ -30,16 +31,21 @@ public class TestListener implements ITestListener {
        // ReportManager.createTest(testName, description != null ? description : testName);
         TestConstants.testCount++;
 
-        ChainTestListener.startTest(
-                result.getMethod()
-                        .getMethodName()
-        );
+        String className = result.getTestClass().getRealClass().getSimpleName();
+        try {
+            ChainTestListener.startTest(
+                    testName,
+                    className,
+                    description,
+                    result.getMethod().getGroups()
+            );
 
-        ChainTestListener.addBrowser(ConfigManager.get("browser"));
-        ChainTestListener.addEnvironment(ConfigManager.get("env"));
-        ChainTestListener.addTestClass(
-                getClass().getSimpleName()
-        );
+            ChainTestListener.addBrowser(ConfigManager.get("browser"));
+            ChainTestListener.addEnvironment(ConfigManager.get("env"));
+            ChainTestListener.addTestClass(className);
+        } catch (Exception reportingException) {
+            logger.warn("Failed to report test start to ChainTest: {}", reportingException.getMessage());
+        }
     }
 
     @Override
@@ -50,7 +56,11 @@ public class TestListener implements ITestListener {
         tendTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
         ReportUtils.logInfo(timeLog + CustomTimeUtil.getTimeDifference(tStartTime, tendTime, timeFormat));
         TestConstants.passedTC++;
-        ChainTestListener.passTest();
+        try {
+            ChainTestListener.passTest();
+        } catch (Exception reportingException) {
+            logger.warn("Failed to report test success to ChainTest: {}", reportingException.getMessage());
+        }
     }
 
     @Override
@@ -61,10 +71,22 @@ public class TestListener implements ITestListener {
         tendTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
         ReportUtils.logInfo(timeLog + CustomTimeUtil.getTimeDifference(tStartTime, tendTime, timeFormat));
         TestConstants.failedTC++;
-        ChainTestListener.failTest(result.getThrowable(), BrowserManager.getPage());
+        Page page = null;
         try {
-            if (BrowserManager.getPage() != null && !BrowserManager.getPage().isClosed()) {
-                String screenshotPath = ScreenshotUtils.captureScreenshot(BrowserManager.getPage(), testName);
+            page = BrowserManager.getPage();
+        } catch (Exception ignored) {
+            // Non-UI tests do not have a Playwright Page initialized
+        }
+
+        try {
+            ChainTestListener.failTest(result.getThrowable(), page);
+        } catch (Exception reportingException) {
+            logger.warn("Failed to report test failure to ChainTest: {}", reportingException.getMessage());
+        }
+
+        try {
+            if (page != null && !page.isClosed()) {
+                String screenshotPath = ScreenshotUtils.captureScreenshot(page, testName);
                 if (screenshotPath != null && !screenshotPath.isEmpty()) {
                     ReportUtils.logScreenshot(screenshotPath, "Failure Screenshot");
                 }
@@ -82,7 +104,14 @@ public class TestListener implements ITestListener {
         tendTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
         ReportUtils.logInfo(timeLog + CustomTimeUtil.getTimeDifference(tStartTime, tendTime, timeFormat));
         TestConstants.skippedTC++;
-        ChainTestListener.skipTest(result.getThrowable().toString());
+        String skipReason = result.getThrowable() != null
+                ? (result.getThrowable().getMessage() != null ? result.getThrowable().getMessage() : result.getThrowable().toString())
+                : "Test skipped";
+        try {
+            ChainTestListener.skipTest(skipReason);
+        } catch (Exception reportingException) {
+            logger.warn("Failed to report test skip to ChainTest: {}", reportingException.getMessage());
+        }
     }
 
     @Override
@@ -94,9 +123,12 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onFinish(ITestContext context) {
-
         logger.info("Finished Context/Test Tag: {}", context.getName());
         TestConstants.endTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
-
+        try {
+            ChainTestListener.flush();
+        } catch (Exception reportingException) {
+            logger.warn("Failed to flush ChainTest: {}", reportingException.getMessage());
+        }
     }
 }

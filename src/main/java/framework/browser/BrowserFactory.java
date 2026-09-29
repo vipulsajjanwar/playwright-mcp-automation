@@ -20,14 +20,19 @@ public class BrowserFactory {
 
     public static Browser getBrowser() {
         if (threadBrowser.get() == null || !threadBrowser.get().isConnected()) {
-            threadBrowser.set(createBrowserInstance());
+            String browserName = ConfigManager.get(
+                    "browser",
+                    BrowserConstants.CHROMIUM
+            );
+
+            threadBrowser.set(createBrowserInstance(browserName));
         }
         return threadBrowser.get();
     }
 
-    private static Browser createBrowserInstance() {
+    private static Browser createBrowserInstance(String browserName) {
         Playwright playwright = PlaywrightManager.getPlaywright();
-        String browserName = ConfigManager.get("browser", BrowserConstants.CHROMIUM).toLowerCase();
+
         boolean headless = ConfigManager.getBoolean("headless", true);
         double slowMo = ConfigManager.getInt("slowMo", 0);
 

@@ -22,5 +22,6 @@ public class SuiteListener implements ISuiteListener {
     public void onFinish(ISuite suite) {
         logger.info("================ Finishing Test Suite: {} ================", suite.getName());
         ReportManager.flushReports();
+        ChainTestListener.flush();
     }
 }

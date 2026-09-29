@@ -26,4 +26,28 @@ test-output/
 *.secret
 *.env.local
 
+# Test reports
+allure-results/
+allure-report/
+test-output/
 reports/
+
+# Screenshots / videos
+screenshots/
+videos/
+traces/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Temporary files
+*.tmp
+*.temp
+
+# Credentials
+*.pem
+*.key
+credentials.json
+secrets.json

@@ -2,6 +2,8 @@ package framework.reporting;
 
 import framework.listeners.ChainTestListener;
 
+import com.aventstack.chaintest.domain.Test;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,6 +25,11 @@ public class ChainTestContext {
 
     private final Map<String, String> metadata =
             new LinkedHashMap<>();
+
+    private Test chainTestNode;
+
+    private String className;
+
 
     public ChainTestContext(
             String testName,
@@ -81,5 +88,21 @@ public class ChainTestContext {
 
     public Map<String, String> getMetadata() {
         return metadata;
+    }
+
+    public Test getChainTestNode() {
+        return chainTestNode;
+    }
+
+    public void setChainTestNode(Test chainTestNode) {
+        this.chainTestNode = chainTestNode;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

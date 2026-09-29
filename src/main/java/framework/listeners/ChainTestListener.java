@@ -1,13 +1,25 @@
 package framework.listeners;
 
+import com.aventstack.chaintest.domain.Embed;
+import com.aventstack.chaintest.domain.Result;
+import com.aventstack.chaintest.domain.Test;
+import com.aventstack.chaintest.service.ChainPluginService;
 import com.microsoft.playwright.Page;
+import framework.browser.BrowserManager;
 import framework.config.ChainTestConfig;
 import framework.config.ConfigManager;
+import framework.constants.FrameworkConstants;
+import framework.constants.TestConstants;
 import framework.reporting.ChainTestContext;
 import framework.reporting.ChainTestLogger;
 import framework.reporting.LogLevel;
 import framework.reporting.TestStatus;
 import framework.utils.ChainTestUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.ISuite;
+import org.testng.ISuiteListener;
+import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
@@ -16,176 +28,238 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ChainTestListener implements ITestListener {
+public class ChainTestListener implements ITestListener, ISuiteListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChainTestListener.class);
 
     private static final ThreadLocal<ChainTestContext> CURRENT_TEST =
             new ThreadLocal<>();
 
+    private static final ChainPluginService SERVICE = new ChainPluginService("testng");
+    private static final AtomicBoolean SERVICE_STARTED = new AtomicBoolean(false);
+
+    private static final Map<String, Test> SUITES = new ConcurrentHashMap<>();
+    private static final Map<String, Test> CLASSES = new ConcurrentHashMap<>();
+    private static final Set<String> FLUSHED_SUITES = ConcurrentHashMap.newKeySet();
+
     private static final DateTimeFormatter TIMESTAMP_FORMAT =
             DateTimeFormatter.ofPattern(ConfigManager.get("timestamp.format", "yyyy-MM-dd HH:mm:ss"));
 
-    // ============================================================
-    // ENABLE / DISABLE
-    // ============================================================
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                if (ChainTestUtil.isEnabled()) {
+                    flush();
+                }
+            } catch (Exception ignored) {
+            }
+        }));
+    }
 
-    /**
-     * Returns whether ChainTest reporting is enabled.
-     *
-     * Priority:
-     *
-     * 1. JVM argument:
-     *    -Dchaintest.enabled=true
-     *
-     * 2. chaintest.properties
-     *
-     * 3. false
-     */
+    private static void ensureServiceStarted() {
+        if (!ChainTestUtil.isEnabled()) {
+            return;
+        }
+
+        if (!SERVICE_STARTED.getAndSet(true)) {
+            long totalStart = System.currentTimeMillis();
+            try {
+                logger.info("========== ChainTest Service Initialization START ==========");
+                long start = System.currentTimeMillis();
+                logger.info("Starting ChainPluginService...");
+                SERVICE.start();
+                logger.info(
+                        "ChainPluginService.start() completed in {} ms",
+                        System.currentTimeMillis() - start
+                );
+                start = System.currentTimeMillis();
+                SERVICE.addSystemInfo("OS", System.getProperty("os.name"));
+                logger.info(
+                        "Added OS info in {} ms",
+                        System.currentTimeMillis() - start
+                );
+                SERVICE.addSystemInfo("Java", System.getProperty("java.version"));
+                String env = ConfigManager.get("env");
+                if (env != null && !env.isBlank()) {
+                    SERVICE.addSystemInfo("Environment", env);
+                }
+                String browser = ConfigManager.get("browser");
+                if (browser != null && !browser.isBlank()) {
+                    SERVICE.addSystemInfo("Browser", browser);
+                }
+                String baseUrl = ConfigManager.get("baseUrl");
+                if (baseUrl != null && !baseUrl.isBlank()) {
+                    SERVICE.addSystemInfo("Base URL", baseUrl);
+                }
+            } catch (Exception e) {
+                logger.warn("Failed to initialize ChainTest service: {}", e.getMessage());
+            }
+        }
+    }
+
+    private static Test getOrCreateSuite(String suiteName) {
+        if (suiteName == null || suiteName.isBlank()) {
+            suiteName = TestConstants.SuiteName != null && !TestConstants.SuiteName.isBlank()
+                    ? TestConstants.SuiteName
+                    : "Playwright Test Automation";
+        }
+        return SUITES.computeIfAbsent(suiteName, name -> {
+            ensureServiceStarted();
+            return new Test(name);
+        });
+    }
+
+    private static Test getOrCreateClass(Test suite, String className) {
+        final String finalClassName = (className == null || className.isBlank()) ? "DefaultClass" : className;
+        final String key = suite.getName() + "::" + finalClassName;
+        return CLASSES.computeIfAbsent(key, k -> {
+            Test classTest = new Test(finalClassName);
+            suite.addChild(classTest);
+            return classTest;
+        });
+    }
 
     // ============================================================
     // TEST LIFECYCLE
     // ============================================================
 
-    /**
-     * Starts a ChainTest test.
-     */
     public static void startTest(String testName) {
+        startTest(testName, null, null, null);
+    }
 
+    public static void startTest(String testName, String className, String description, String[] groups) {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
 
-        // Prevent accidental duplicate test creation
-        endCurrentTestIfRequired();
+        try {
+            endCurrentTestIfRequired();
+            ensureServiceStarted();
 
-        ChainTestContext context =
-                new ChainTestContext(
-                        testName,
-                        Thread.currentThread().getId()
-                );
+            String suiteName = TestConstants.SuiteName != null && !TestConstants.SuiteName.isBlank()
+                    ? TestConstants.SuiteName
+                    : "Playwright Test Automation";
+            Test suite = getOrCreateSuite(suiteName);
 
-        CURRENT_TEST.set(context);
+            if (className == null || className.isBlank()) {
+                className = "DefaultClass";
+            }
+            Test classTest = getOrCreateClass(suite, className);
 
-        // --------------------------------------------------------
-        // ACTUAL CHAINTTEST TEST CREATION
-        // --------------------------------------------------------
-        //
-        // Put your ChainTest test creation call here.
-        //
-        // Example conceptually:
-        //
-        // context.setChainTest(
-        //     <ChainTest test object>
-        // );
-        //
-        // --------------------------------------------------------
+            List<String> tags = groups != null ? Arrays.asList(groups) : Collections.emptyList();
+            Test methodTest = new Test(testName, Optional.of(className), tags);
+            if (description != null && !description.isBlank()) {
+                methodTest.setDescription(description);
+            }
+            classTest.addChild(methodTest);
 
-        info(
-                "========== TEST STARTED: "
-                        + testName
-                        + " =========="
-        );
+            ChainTestContext context = new ChainTestContext(testName, Thread.currentThread().getId());
+            context.setChainTestNode(methodTest);
+            context.setClassName(className);
+            CURRENT_TEST.set(context);
+
+            info("========== TEST STARTED: " + testName + " ==========");
+        } catch (Exception e) {
+            logger.warn("Failed to start ChainTest for {}: {}", testName, e.getMessage());
+        }
     }
 
-    /**
-     * Ends the current test successfully.
-     */
     public static void passTest() {
-
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
 
-        ChainTestContext context =
-                CURRENT_TEST.get();
+        try {
+            ChainTestContext context = CURRENT_TEST.get();
+            if (context == null) {
+                return;
+            }
 
-        if (context == null) {
-            return;
+            context.setStatus(TestStatus.PASS);
+            Test test = context.getChainTestNode();
+            if (test != null) {
+                test.complete();
+                test.setResult(Result.PASSED.getResult());
+            }
+
+            passStep("Test passed: " + context.getTestName());
+            finishCurrentTest();
+        } catch (Exception e) {
+            logger.warn("Error marking ChainTest as passed: {}", e.getMessage());
         }
-
-        context.setStatus(TestStatus.PASS);
-
-        passStep(
-                "Test passed: "
-                        + context.getTestName()
-        );
-
-        finishCurrentTest();
     }
 
-    /**
-     * Marks the current test as failed.
-     */
-    public static void failTest(
-            Throwable throwable,
-            Page page) {
-
+    public static void failTest(Throwable throwable, Page page) {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
 
-        ChainTestContext context =
-                CURRENT_TEST.get();
+        try {
+            ChainTestContext context = CURRENT_TEST.get();
+            if (context == null) {
+                return;
+            }
 
-        if (context == null) {
-            return;
+            context.setStatus(TestStatus.FAIL);
+            Test test = context.getChainTestNode();
+            if (test != null) {
+                test.complete(throwable);
+                test.setResult(Result.FAILED.getResult());
+            }
+
+            String message = throwable != null ? throwable.getMessage() : "Test execution failed";
+            error("Test failed: " + message);
+
+            if (page != null && isScreenshotOnFailureEnabled()) {
+                attachScreenshot("Failure Screenshot", page);
+            }
+
+            finishCurrentTest();
+        } catch (Exception e) {
+            logger.warn("Error marking ChainTest as failed: {}", e.getMessage());
         }
-
-        context.setStatus(TestStatus.FAIL);
-
-        String message =
-                throwable != null
-                        ? throwable.getMessage()
-                        : "Test execution failed";
-
-        error(
-                "Test failed: " + message
-        );
-
-        if (page != null &&
-                isScreenshotOnFailureEnabled()) {
-
-            attachScreenshot(
-                    "Failure Screenshot",
-                    page
-            );
-        }
-
-        finishCurrentTest();
     }
 
-    /**
-     * Marks the current test as skipped.
-     */
-    public static void skipTest(
-            String reason) {
-
+    public static void skipTest(String reason) {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
 
-        ChainTestContext context =
-                CURRENT_TEST.get();
+        try {
+            if (reason == null || reason.isBlank()) {
+                reason = "Test skipped";
+            }
 
-        if (context == null) {
-            return;
+            ChainTestContext context = CURRENT_TEST.get();
+            if (context == null) {
+                return;
+            }
+
+            context.setStatus(TestStatus.SKIP);
+            Test test = context.getChainTestNode();
+            if (test != null) {
+                test.complete();
+                test.setResult("SKIPPED");
+                test.setError(reason);
+            }
+
+            warn("Test skipped: " + reason);
+            finishCurrentTest();
+        } catch (Exception e) {
+            logger.warn("Error marking ChainTest as skipped: {}", e.getMessage());
         }
-
-        context.setStatus(TestStatus.SKIP);
-
-        warn(
-                "Test skipped: "
-                        + reason
-        );
-
-        finishCurrentTest();
     }
 
-    /**
-     * Ends the current test without forcing a status.
-     */
     public static void endTest() {
-
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
@@ -193,51 +267,25 @@ public class ChainTestListener implements ITestListener {
         finishCurrentTest();
     }
 
-    // ============================================================
-    // TESTNG INTEGRATION
-    // ============================================================
-
-    /**
-     * Handles a TestNG result automatically.
-     * <p>
-     * Call this from @AfterMethod or your TestNG listener.
-     */
-    public static void handleTestResult(
-            ITestResult result,
-            Page page) {
-
+    public static void handleTestResult(ITestResult result, Page page) {
         if (!ChainTestUtil.isEnabled() || result == null) {
             return;
         }
 
         switch (result.getStatus()) {
-
             case ITestResult.SUCCESS:
-
                 passTest();
                 break;
-
             case ITestResult.FAILURE:
-
-                failTest(
-                        result.getThrowable(),
-                        page
-                );
+                failTest(result.getThrowable(), page);
                 break;
-
             case ITestResult.SKIP:
-
-                String reason =
-                        result.getThrowable() != null
-                                ? result.getThrowable()
-                                .getMessage()
-                                : "Test skipped";
-
+                String reason = result.getThrowable() != null
+                        ? result.getThrowable().getMessage()
+                        : "Test skipped";
                 skipTest(reason);
                 break;
-
             default:
-
                 endTest();
                 break;
         }
@@ -247,259 +295,220 @@ public class ChainTestListener implements ITestListener {
     // LOGGING
     // ============================================================
 
-    /**
-     * INFO log.
-     */
-    public static void info(
-            String message) {
-
+    public static void info(String message) {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
-
-        log(
-                LogLevel.INFO,
-                message
-        );
+        log(LogLevel.INFO, message);
     }
 
-    /**
-     * PASS log.
-     */
-    public static void passStep(
-            String message) {
-
+    public static void passStep(String message) {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
-
-        log(
-                LogLevel.PASS,
-                message
-        );
+        log(LogLevel.PASS, message);
     }
 
-    /**
-     * WARNING log.
-     */
-    public static void warn(
-            String message) {
-
+    public static void warn(String message) {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
-
-        log(
-                LogLevel.WARN,
-                message
-        );
+        log(LogLevel.WARN, message);
     }
 
-    /**
-     * ERROR log.
-     */
-    public static void error(
-            String message) {
-
+    public static void error(String message) {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
-
-        log(
-                LogLevel.ERROR,
-                message
-        );
+        log(LogLevel.ERROR, message);
     }
 
-    /**
-     * FAIL log.
-     */
-    public static void fail(
-            String message) {
-
+    public static void fail(String message) {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
-
-        log(
-                LogLevel.FAIL,
-                message
-        );
+        log(LogLevel.FAIL, message);
     }
 
-    /**
-     * Central logging method.
-     * <p>
-     * IMPORTANT:
-     * Do not use System.out.println here.
-     * <p>
-     * Otherwise you can get duplicate console/report output when
-     * ChainTest/TestNG logging is also enabled.
-     */
-    private static void log(
-            LogLevel level,
-            String message) {
+    public static void debug(String message) {
+        if (!ChainTestUtil.isEnabled()) {
+            return;
+        }
+        log(LogLevel.DEBUG, message);
+    }
 
-        ChainTestContext context =
-                CURRENT_TEST.get();
-
+    private static void log(LogLevel level, String message) {
+        ChainTestContext context = CURRENT_TEST.get();
         if (context == null) {
-
-            // Don't silently lose framework logs.
-            // But don't create a new ChainTest test either.
             return;
         }
 
-        String formattedMessage =
-                "[" + level.name() + "] "
-                        + message;
-
+        String formattedMessage = "[" + level.name() + "] " + message;
         context.incrementLogCount();
-
-        // --------------------------------------------------------
-        // ACTUAL CHAINTTEST LOGGING
-        // --------------------------------------------------------
-        //
-        // Delegate to one place only.
-        //
-        ChainTestLogger.log(
-                level,
-                formattedMessage
-        );
+        ChainTestLogger.log(level, formattedMessage);
     }
 
     // ============================================================
-    // SCREENSHOT
+    // SCREENSHOT & ATTACHMENTS
     // ============================================================
 
-    /**
-     * Captures a Playwright screenshot and stores it under the
-     * ChainTest report directory.
-     */
-    public static Path attachScreenshot(
-            String name,
-            Page page) {
-
+    public static Path attachScreenshot(String name, Page page) {
         if (!ChainTestUtil.isEnabled() || page == null) {
             return null;
         }
 
         try {
-
-            Path directory =
-                    getScreenshotDirectory();
-
-            Files.createDirectories(directory);
-
-            String fileName =
-                    sanitizeFileName(name)
-                            + "_"
-                            + timestamp()
-                            + ".png";
-
-            Path screenshotPath =
-                    directory.resolve(fileName);
-
-            byte[] screenshot =
-                    page.screenshot(
-                            new Page.ScreenshotOptions()
-                                    .setFullPage(true)
-                    );
-
-            Files.write(
-                    screenshotPath,
-                    screenshot
-            );
-
-            ChainTestContext context =
-                    CURRENT_TEST.get();
-
-            if (context != null) {
-
-                context.addAttachment(
-                        screenshotPath
-                );
+            if (page.isClosed()) {
+                return null;
             }
 
-            // ----------------------------------------------------
-            // ACTUAL CHAINTTEST ATTACHMENT
-            // ----------------------------------------------------
-            //
-            // Attach screenshotPath to ChainTest here.
-            //
-            // ----------------------------------------------------
-
-            return screenshotPath;
-
-        } catch (Exception e) {
-
-            error(
-                    "Unable to capture screenshot: "
-                            + e.getMessage()
+            byte[] screenshot = page.screenshot(
+                    new Page.ScreenshotOptions().setFullPage(true)
             );
 
+            return attachScreenshotBytes(name, screenshot);
+        } catch (Exception e) {
+            logger.warn("Unable to capture ChainTest screenshot {}: {}", name, e.getMessage());
             return null;
         }
     }
 
-    // ============================================================
-    // TEXT ATTACHMENT
-    // ============================================================
+    public static Path attachScreenshotBytes(String name, byte[] screenshot) {
+        if (!ChainTestUtil.isEnabled() || screenshot == null || screenshot.length == 0) {
+            return null;
+        }
 
-    /**
-     * Creates a text attachment.
-     */
-    public static Path attachText(
-            String name,
-            String content) {
+        try {
+            Path directory = getScreenshotDirectory();
+            Files.createDirectories(directory);
 
+            String fileName = sanitizeFileName(name) + "_" + timestamp() + ".png";
+            Path screenshotPath = directory.resolve(fileName);
+            Files.write(screenshotPath, screenshot);
+
+            ChainTestContext context = CURRENT_TEST.get();
+            if (context != null) {
+                context.addAttachment(screenshotPath);
+                Test test = context.getChainTestNode();
+                if (test != null) {
+                    test.addEmbed(new Embed(screenshot, "image/png"));
+                }
+            }
+
+            return screenshotPath;
+        } catch (Exception e) {
+            logger.warn("Unable to attach screenshot to ChainTest: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static Path attachScreenshotPath(String name, Path screenshotPath) {
+        if (!ChainTestUtil.isEnabled() || screenshotPath == null || !Files.exists(screenshotPath)) {
+            return null;
+        }
+
+        try {
+            byte[] bytes = Files.readAllBytes(screenshotPath);
+
+            ChainTestContext context = CURRENT_TEST.get();
+            if (context != null) {
+                context.addAttachment(screenshotPath);
+                Test test = context.getChainTestNode();
+                if (test != null) {
+                    test.addEmbed(new Embed(bytes, "image/png"));
+                }
+            }
+
+            return screenshotPath;
+        } catch (Exception e) {
+            logger.warn("Unable to attach screenshot path to ChainTest: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static Path attachText(String name, String content) {
         if (!ChainTestUtil.isEnabled()) {
             return null;
         }
 
         try {
-
-            Path directory =
-                    getAttachmentDirectory();
-
+            Path directory = getAttachmentDirectory();
             Files.createDirectories(directory);
 
-            String fileName =
-                    sanitizeFileName(name)
-                            + "_"
-                            + timestamp()
-                            + ".txt";
+            String fileName = sanitizeFileName(name) + "_" + timestamp() + ".txt";
+            Path file = directory.resolve(fileName);
+            Files.writeString(file, content != null ? content : "");
 
-            Path file =
-                    directory.resolve(fileName);
-
-            Files.writeString(
-                    file,
-                    content != null
-                            ? content
-                            : ""
-            );
-
-            ChainTestContext context =
-                    CURRENT_TEST.get();
-
+            ChainTestContext context = CURRENT_TEST.get();
             if (context != null) {
                 context.addAttachment(file);
+                Test test = context.getChainTestNode();
+                if (test != null) {
+                    test.addLog("[" + name + "]\n" + (content != null ? content : ""));
+                }
             }
 
-            // ----------------------------------------------------
-            // ACTUAL CHAINTTEST ATTACHMENT
-            // ----------------------------------------------------
+            return file;
+        } catch (Exception e) {
+            logger.warn("Unable to create text attachment in ChainTest: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static Path attachJson(String name, String json) {
+        if (!ChainTestUtil.isEnabled()) {
+            return null;
+        }
+
+        try {
+            Path directory = getAttachmentDirectory();
+            Files.createDirectories(directory);
+
+            String fileName = sanitizeFileName(name) + "_" + timestamp() + ".json";
+            Path file = directory.resolve(fileName);
+            Files.writeString(file, json != null ? json : "{}");
+
+            ChainTestContext context = CURRENT_TEST.get();
+            if (context != null) {
+                context.addAttachment(file);
+                Test test = context.getChainTestNode();
+                if (test != null) {
+                    test.addLog("[" + name + " - JSON]\n" + (json != null ? json : "{}"));
+                }
+            }
 
             return file;
-
         } catch (Exception e) {
+            logger.warn("Unable to create JSON attachment in ChainTest: {}", e.getMessage());
+            return null;
+        }
+    }
 
-            error(
-                    "Unable to create text attachment: "
-                            + e.getMessage()
-            );
+    public static Path attachHtml(String name, String html) {
+        if (!ChainTestUtil.isEnabled()) {
+            return null;
+        }
 
+        try {
+            Path directory = getAttachmentDirectory();
+            Files.createDirectories(directory);
+
+            String fileName = sanitizeFileName(name) + "_" + timestamp() + ".html";
+            Path file = directory.resolve(fileName);
+            Files.writeString(file, html != null ? html : "");
+
+            ChainTestContext context = CURRENT_TEST.get();
+            if (context != null) {
+                context.addAttachment(file);
+                Test test = context.getChainTestNode();
+                if (test != null) {
+                    test.addLog("[" + name + " - HTML]\n" + (html != null ? html : ""));
+                }
+            }
+
+            return file;
+        } catch (Exception e) {
+            logger.warn("Unable to create HTML attachment in ChainTest: {}", e.getMessage());
             return null;
         }
     }
@@ -508,111 +517,204 @@ public class ChainTestListener implements ITestListener {
     // METADATA
     // ============================================================
 
-    public static void addMetadata(
-            String key,
-            String value) {
+    public static void addMetadata(String key, String value) {
+        if (!ChainTestUtil.isEnabled() || key == null || value == null) {
+            return;
+        }
 
+        try {
+            ensureServiceStarted();
+            SERVICE.addSystemInfo(key, value);
+
+            ChainTestContext context = CURRENT_TEST.get();
+            if (context != null) {
+                context.addMetadata(key, value);
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to add ChainTest metadata {}: {}", key, e.getMessage());
+        }
+    }
+
+    public static void addBrowser(String browser) {
+        if (browser != null && !browser.isBlank()) {
+            addMetadata("Browser", browser);
+        }
+    }
+
+    public static void addEnvironment(String environment) {
+        if (environment != null && !environment.isBlank()) {
+            addMetadata("Environment", environment);
+        }
+    }
+
+    public static void addTestClass(String className) {
+        if (!ChainTestUtil.isEnabled() || className == null || className.isBlank()) {
+            return;
+        }
+
+        addMetadata("Test Class", className);
+        ChainTestContext context = CURRENT_TEST.get();
+        if (context != null) {
+            context.setClassName(className);
+            Test methodTest = context.getChainTestNode();
+            if (methodTest != null) {
+                methodTest.setClassName(className);
+                Test currentParent = methodTest.getParent();
+                String suiteName = TestConstants.SuiteName != null && !TestConstants.SuiteName.isBlank()
+                        ? TestConstants.SuiteName
+                        : "Playwright Test Automation";
+                Test suite = getOrCreateSuite(suiteName);
+                Test targetClass = getOrCreateClass(suite, className);
+                if (currentParent != targetClass) {
+                    if (currentParent != null) {
+                        currentParent.getChildren().remove(methodTest);
+                    }
+                    targetClass.addChild(methodTest);
+                }
+            }
+        }
+    }
+
+    // ============================================================
+    // CURRENT TEST / CONTEXT
+    // ============================================================
+
+    public static String getCurrentTestName() {
+        ChainTestContext context = CURRENT_TEST.get();
+        return context != null ? context.getTestName() : null;
+    }
+
+    public static boolean hasActiveTest() {
+        return CURRENT_TEST.get() != null;
+    }
+
+    public static ChainTestContext getCurrentContext() {
+        return CURRENT_TEST.get();
+    }
+
+    // ============================================================
+    // INTERNAL FINISH & REPORT FINALIZATION
+    // ============================================================
+
+    private static void finishCurrentTest() {
+        ChainTestContext context = CURRENT_TEST.get();
+        if (context == null) {
+            return;
+        }
+
+        try {
+            info("========== TEST FINISHED: " + context.getTestName() + " ==========");
+        } finally {
+            CURRENT_TEST.remove();
+        }
+    }
+
+    private static void endCurrentTestIfRequired() {
+        ChainTestContext context = CURRENT_TEST.get();
+        if (context != null) {
+            finishCurrentTest();
+        }
+    }
+
+    public static synchronized void flush() {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
 
-        ChainTestContext context =
-                CURRENT_TEST.get();
+        try {
+            endCurrentTestIfRequired();
 
-        if (context == null) {
+            for (Map.Entry<String, Test> entry : SUITES.entrySet()) {
+                Test suiteTest = entry.getValue();
+                if (FLUSHED_SUITES.add(suiteTest.getName())) {
+                    for (Test classTest : suiteTest.getChildren()) {
+                        classTest.complete();
+                    }
+                    suiteTest.complete();
+                    SERVICE.afterTest(suiteTest, Optional.empty());
+                }
+            }
+
+            SERVICE.flush();
+            SERVICE.executionFinished();
+            logger.info("ChainTest report successfully generated in target/chaintest");
+        } catch (Exception e) {
+            logger.warn("Failed to finalize ChainTest report: {}", e.getMessage(), e);
+        }
+    }
+
+    // ============================================================
+    // TESTNG LISTENER INTERFACE IMPLEMENTATION
+    // ============================================================
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        if (!ChainTestUtil.isEnabled()) {
             return;
         }
-
-        context.addMetadata(
-                key,
-                value
-        );
-
-        // --------------------------------------------------------
-        // ACTUAL CHAINTTEST METADATA CALL
-        // --------------------------------------------------------
+        if (!hasActiveTest()) {
+            String testName = result.getMethod().getMethodName();
+            String className = result.getTestClass().getRealClass().getSimpleName();
+            String description = result.getMethod().getDescription();
+            String[] groups = result.getMethod().getGroups();
+            startTest(testName, className, description, groups);
+        }
     }
 
-    public static void addBrowser(
-            String browser) {
-
-        addMetadata(
-                "Browser",
-                browser
-        );
-    }
-
-    public static void addEnvironment(
-            String environment) {
-
-        addMetadata(
-                "Environment",
-                environment
-        );
-    }
-
-    public static void addTestClass(
-            String className) {
-
-        addMetadata(
-                "Test Class",
-                className
-        );
-    }
-
-    // ============================================================
-    // CURRENT TEST
-    // ============================================================
-
-    public static String getCurrentTestName() {
-
-        ChainTestContext context =
-                CURRENT_TEST.get();
-
-        return context != null
-                ? context.getTestName()
-                : null;
-    }
-
-    public static boolean hasActiveTest() {
-
-        return CURRENT_TEST.get() != null;
-    }
-
-    // ============================================================
-    // INTERNAL FINISH
-    // ============================================================
-
-    private static void finishCurrentTest() {
-
-        ChainTestContext context =
-                CURRENT_TEST.get();
-
-        if (context == null) {
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        if (!ChainTestUtil.isEnabled()) {
             return;
         }
-
-        info(
-                "========== TEST FINISHED: "
-                        + context.getTestName()
-                        + " =========="
-        );
-
-        // --------------------------------------------------------
-        // ACTUAL CHAINTTEST TEST FINALIZATION
-        // --------------------------------------------------------
-
-        CURRENT_TEST.remove();
+        if (hasActiveTest()) {
+            passTest();
+        }
     }
 
-    private static void endCurrentTestIfRequired() {
-
-        ChainTestContext context =
-                CURRENT_TEST.get();
-
-        if (context != null) {
-            finishCurrentTest();
+    @Override
+    public void onTestFailure(ITestResult result) {
+        if (!ChainTestUtil.isEnabled()) {
+            return;
         }
+        if (hasActiveTest()) {
+            failTest(result.getThrowable(), BrowserManager.getPage());
+        }
+    }
+
+    @Override
+    public void onTestSkipped(ITestResult result) {
+        if (!ChainTestUtil.isEnabled()) {
+            return;
+        }
+        if (hasActiveTest()) {
+            String reason = result.getThrowable() != null
+                    ? result.getThrowable().getMessage()
+                    : "Test skipped";
+            skipTest(reason);
+        }
+    }
+
+    @Override
+    public void onStart(ISuite suite) {
+        if (!ChainTestUtil.isEnabled()) {
+            return;
+        }
+        ensureServiceStarted();
+        getOrCreateSuite(suite.getName());
+    }
+
+    @Override
+    public void onFinish(ISuite suite) {
+        flush();
+    }
+
+    @Override
+    public void onStart(ITestContext context) {
+    }
+
+    @Override
+    public void onFinish(ITestContext context) {
+        flush();
     }
 
     // ============================================================
@@ -620,33 +722,19 @@ public class ChainTestListener implements ITestListener {
     // ============================================================
 
     private static Path getReportDirectory() {
-
-        String configuredPath =
-                ChainTestConfig.get(
-                        "chaintest.report.path",
-                        "reports/chaintest"
-                );
-
-        return Paths.get(
-                configuredPath
-        );
+        String configuredPath = FrameworkConstants.REPORT_DIR;
+        return Paths.get(configuredPath);
     }
 
     private static Path getScreenshotDirectory() {
-
-        return getReportDirectory()
-                .resolve("screenshots");
+        return getReportDirectory().resolve("screenshots");
     }
 
     private static Path getAttachmentDirectory() {
-
-        return getReportDirectory()
-                .resolve("attachments");
+        return getReportDirectory().resolve("attachments");
     }
 
-    private static boolean
-    isScreenshotOnFailureEnabled() {
-
+    private static boolean isScreenshotOnFailureEnabled() {
         return ChainTestConfig.getBoolean(
                 "chaintest.screenshot.on.failure",
                 true
@@ -654,26 +742,13 @@ public class ChainTestListener implements ITestListener {
     }
 
     private static String timestamp() {
-
-        return LocalDateTime.now()
-                .format(TIMESTAMP_FORMAT);
+        return LocalDateTime.now().format(TIMESTAMP_FORMAT);
     }
 
-    private static String sanitizeFileName(
-            String value) {
-
-        if (value == null ||
-                value.isBlank()) {
-
+    private static String sanitizeFileName(String value) {
+        if (value == null || value.isBlank()) {
             return "attachment";
         }
-
-        return value
-                .replaceAll(
-                        "[^a-zA-Z0-9._-]",
-                        "_"
-                );
+        return value.replaceAll("[^a-zA-Z0-9._-]", "_");
     }
-
-
 }

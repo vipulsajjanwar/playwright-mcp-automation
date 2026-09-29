@@ -131,6 +131,9 @@ public class ReportUtils {
                 AllureUtils.attachStackTrace("Stack trace", e);
             }
         }
+        if (ChainTestUtil.isEnabled()) {
+            ChainTestUtil.error(message, e);
+        }
     }
 
     public static void logScreenshot(String screenshotPath, String title) {
@@ -149,6 +152,9 @@ public class ReportUtils {
             } catch (IOException e) {
                 logger.error("Failed to attach screenshot to Allure report", e);
             }
+        }
+        if (ChainTestUtil.isEnabled() && screenshotPath != null && !screenshotPath.isEmpty()) {
+            ChainTestUtil.attachScreenshot(screenshotPath, title);
         }
     }
 
@@ -227,6 +233,9 @@ public class ReportUtils {
 
             TestConstants.NUMBEROFFAILURES++;
             Reporter.log(message + " | " + exceptionLocation);
+            if (ChainTestUtil.isEnabled()) {
+                ChainTestUtil.error(message, e);
+            }
 
         } catch (Exception ex) {
             logger.error("reportErrorLog(Exception) itself failed: " + ex.getMessage());

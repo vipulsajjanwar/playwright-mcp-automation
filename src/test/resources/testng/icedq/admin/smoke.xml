@@ -6,8 +6,6 @@
         <listener class-name="framework.listeners.SuiteListener" />
         <listener class-name="framework.listeners.AnnotationTransformer" />
         <listener class-name="framework.listeners.AllureTestListener"/>
-        <listener class-name="framework.listeners.ChainTestListener"/>
-
     </listeners>
 
     <parameter name="ExecutionID" value="icedq001" />
@@ -18,12 +16,12 @@
                 <include name="smoke" />
             </run>
         </groups>
-    
+
         <classes>
             <class name="tests.icedq.admin.LoginTest">
                 <methods>
                     <include name="testLoginPageNavigation" />
-                    
+
                 </methods>
             </class>
         </classes>

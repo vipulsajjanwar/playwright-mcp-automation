@@ -2,7 +2,13 @@ package framework.utils;
 
 import com.microsoft.playwright.Page;
 import framework.config.ConfigManager;
+import framework.listeners.ChainTestListener;
+import framework.reporting.ChainTestLogger;
+import framework.reporting.LogLevel;
 import org.testng.Reporter;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ChainTestUtil {
 
@@ -23,12 +29,10 @@ public class ChainTestUtil {
     // =========================================================
 
     public static void info(String message) {
-
         if (!isEnabled()) {
             return;
         }
-
-        log("INFO", message);
+        ChainTestLogger.info(message);
     }
 
     // =========================================================
@@ -36,12 +40,10 @@ public class ChainTestUtil {
     // =========================================================
 
     public static void pass(String message) {
-
         if (!isEnabled()) {
             return;
         }
-
-        log("PASS", message);
+        ChainTestLogger.pass(message);
     }
 
     // =========================================================
@@ -49,28 +51,18 @@ public class ChainTestUtil {
     // =========================================================
 
     public static void fail(String message) {
-
         if (!isEnabled()) {
             return;
         }
-
-        log("FAIL", message);
+        ChainTestLogger.fail(message);
     }
 
-    public static void fail(
-            String message,
-            Throwable throwable) {
-
+    public static void fail(String message, Throwable throwable) {
         if (!isEnabled()) {
             return;
         }
-
-        log("FAIL", message);
-
-        exception(
-                "Exception",
-                throwable
-        );
+        ChainTestLogger.fail(message);
+        exception("Exception", throwable);
     }
 
     // =========================================================
@@ -78,12 +70,29 @@ public class ChainTestUtil {
     // =========================================================
 
     public static void warn(String message) {
-
         if (!isEnabled()) {
             return;
         }
+        ChainTestLogger.warn(message);
+    }
 
-        log("WARN", message);
+    // =========================================================
+    // ERROR
+    // =========================================================
+
+    public static void error(String message) {
+        if (!isEnabled()) {
+            return;
+        }
+        ChainTestLogger.error(message);
+    }
+
+    public static void error(String message, Throwable throwable) {
+        if (!isEnabled()) {
+            return;
+        }
+        ChainTestLogger.error(message);
+        exception("Exception", throwable);
     }
 
     // =========================================================
@@ -91,183 +100,117 @@ public class ChainTestUtil {
     // =========================================================
 
     public static void debug(String message) {
-
         if (!isEnabled()) {
             return;
         }
-
-        log("DEBUG", message);
+        ChainTestLogger.debug(message);
     }
 
     // =========================================================
     // EXCEPTION
     // =========================================================
 
-    public static void exception(
-            String message,
-            Throwable throwable) {
-
+    public static void exception(String message, Throwable throwable) {
         if (!isEnabled()) {
             return;
         }
 
         if (throwable == null) {
-
-            log("EXCEPTION", message);
-
+            ChainTestLogger.error(message);
             return;
         }
 
-        log(
-                "EXCEPTION",
-                message
-                        + " | "
-                        + throwable.getClass().getSimpleName()
-                        + ": "
-                        + throwable.getMessage()
-        );
+        String details = message + " | " + throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
+        ChainTestLogger.error(details);
     }
 
     // =========================================================
     // SCREENSHOT
     // =========================================================
 
-    public static void screenshot(
-            Page page,
-            String name) {
-
+    public static void screenshot(Page page, String name) {
         if (!isEnabled()) {
             return;
         }
 
         if (page == null) {
-
-            warn(
-                    "Screenshot skipped because Page is null"
-            );
-
+            warn("Screenshot skipped because Page is null");
             return;
         }
 
         try {
-
-            byte[] screenshot =
-                    page.screenshot(
-                            new Page.ScreenshotOptions()
-                                    .setFullPage(true)
-                    );
-
-            attachImage(
-                    name,
-                    screenshot
-            );
-
+            ChainTestListener.attachScreenshot(name, page);
         } catch (Exception e) {
-
-            warn(
-                    "Unable to capture screenshot: "
-                            + e.getMessage()
-            );
+            warn("Unable to capture screenshot: " + e.getMessage());
         }
     }
 
     // =========================================================
-    // IMAGE
+    // IMAGE / SCREENSHOT ATTACHMENT
     // =========================================================
 
-    public static void attachImage(
-            String name,
-            byte[] imageBytes) {
-
-        if (!isEnabled()) {
+    public static void attachImage(String name, byte[] imageBytes) {
+        if (!isEnabled() || imageBytes == null || imageBytes.length == 0) {
             return;
         }
+        ChainTestListener.attachScreenshotBytes(name, imageBytes);
+    }
 
-        if (imageBytes == null ||
-                imageBytes.length == 0) {
-
-            warn(
-                    "Image attachment skipped: " + name
-            );
-
+    public static void attachScreenshot(String screenshotPath, String title) {
+        if (!isEnabled() || screenshotPath == null || screenshotPath.isEmpty()) {
             return;
         }
-
-        Reporter.log(
-                "[SCREENSHOT] " + name,
-                true
-        );
+        ChainTestListener.attachScreenshotPath(title, Paths.get(screenshotPath));
     }
 
     // =========================================================
     // TEXT
     // =========================================================
 
-    public static void attachText(
-            String name,
-            String content) {
-
+    public static void attachText(String name, String content) {
         if (!isEnabled()) {
             return;
         }
-
-        Reporter.log(
-                "[TEXT] " + name + "\n" + content,
-                true
-        );
+        ChainTestListener.attachText(name, content);
     }
 
     // =========================================================
     // JSON
     // =========================================================
 
-    public static void attachJson(
-            String name,
-            String json) {
-
+    public static void attachJson(String name, String json) {
         if (!isEnabled()) {
             return;
         }
-
-        Reporter.log(
-                "[JSON] " + name + "\n" + json,
-                true
-        );
+        ChainTestListener.attachJson(name, json);
     }
 
     // =========================================================
     // HTML
     // =========================================================
 
-    public static void attachHtml(
-            String name,
-            String html) {
-
+    public static void attachHtml(String name, String html) {
         if (!isEnabled()) {
             return;
         }
-
-        Reporter.log(
-                "[HTML] " + name + "\n" + html,
-                true
-        );
+        ChainTestListener.attachHtml(name, html);
     }
 
     // =========================================================
     // INTERNAL LOG
     // =========================================================
 
-    private static void log(
-            String level,
-            String message) {
-
+    private static void log(String level, String message) {
         if (!isEnabled()) {
             return;
         }
 
-        Reporter.log(
-                "[" + level + "] " + message,
-                true
-        );
+        LogLevel logLevel;
+        try {
+            logLevel = LogLevel.valueOf(level.toUpperCase());
+        } catch (Exception e) {
+            logLevel = LogLevel.INFO;
+        }
+        ChainTestLogger.log(logLevel, message);
     }
 }

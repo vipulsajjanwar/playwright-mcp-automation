@@ -219,7 +219,7 @@ public class EmailNotification {
 
     private static void appendResultsTable(StringBuilder b) {
         b.append("<table style='width:100%;border-collapse:collapse;margin-top:20px;'>")
-                .append("<thead style='background-color:#4b7ad3;color:white;text-align:center;font-size:14px;'><tr>");
+                .append("<thead style='background-color:#b58110;color:white;text-align:center;font-size:14px;'><tr>");
 
         for (String header : new String[]{"Start Time (IST)", "End Time (IST)", "Test Suite Name", "Passed", "Failed", "Skipped"}) {
             b.append("<th style='padding:12px;border:1px solid #ddd;'>").append(header).append("</th>");

@@ -11,6 +11,9 @@ Designed as a modern, high-performance replacement for legacy Selenium POM frame
 
 ---
 
+### Author
+Vipul Sajjanwar
+
 ## 🏗 Framework Architecture
 
 ```text
