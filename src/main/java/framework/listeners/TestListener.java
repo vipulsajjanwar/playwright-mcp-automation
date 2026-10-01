@@ -2,75 +2,94 @@ package framework.listeners;
 
 import com.microsoft.playwright.Page;
 import framework.browser.BrowserManager;
-import framework.config.ConfigManager;
 import framework.constants.TestConstants;
-import framework.reporting.ReportManager;
+import framework.context.TestContext;
+import framework.context.TestContextFactory;
+import framework.context.TestContextManager;
 import framework.reporting.ReportUtils;
-import framework.utils.CustomTimeUtil;
-import framework.utils.ScreenshotUtils;
+import framework.reporting.ReportingManager;
+import framework.reporting.artifacts.ArtifactManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.ISuite;
+import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
-public class TestListener implements ITestListener {
+/**
+ * Primary TestNG listener acting as the central entry point for test execution lifecycle.
+ * Automatically resolves {@link framework.annotations.CustomTest} metadata, initializes
+ * the thread-safe {@link TestContext}, captures Playwright artifacts, and dispatches events
+ * to {@link ReportingManager}.
+ */
+public class TestListener implements ITestListener, ISuiteListener {
 
     private static final Logger logger = LoggerFactory.getLogger(TestListener.class);
-    String timeFormat = ConfigManager.get("time.format", "yyyy-MM-dd HH:mm:ss");
-    String timezone = ConfigManager.get("time.zone", "Asia/Kolkata");
-    String tStartTime;
-    String tendTime;
-    String timeLog = "Time taken by test script :: ";
+
+    @Override
+    public void onStart(ISuite suite) {
+        String suiteName = suite != null ? suite.getName() : "Playwright Automation Suite";
+        TestConstants.SuiteName = ReportUtils.sanitizeFilename(suiteName);
+        logger.info("Initializing Test Suite: {}", suiteName);
+        ReportingManager.getInstance().onSuiteStart(suite);
+    }
+
+    @Override
+    public void onFinish(ISuite suite) {
+        logger.info("Finalizing Test Suite: {}", suite != null ? suite.getName() : "");
+        ReportingManager.getInstance().onSuiteFinish(suite);
+    }
+
+    @Override
+    public void onStart(ITestContext context) {
+        logger.info("Starting Test Tag: {}", context.getName());
+    }
+
+    @Override
+    public void onFinish(ITestContext context) {
+        logger.info("Finished Test Tag: {}", context.getName());
+    }
+
     @Override
     public void onTestStart(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
-        String description = result.getMethod().getDescription();
-        logger.info("Test started: {}", testName);
-        tStartTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
-       // ReportManager.createTest(testName, description != null ? description : testName);
-        TestConstants.testCount++;
+        TestContext context = TestContextFactory.createTestContext(result);
+        TestContextManager.setContext(context);
 
-        String className = result.getTestClass().getRealClass().getSimpleName();
-        try {
-            ChainTestListener.startTest(
-                    testName,
-                    className,
-                    description,
-                    result.getMethod().getGroups()
-            );
-
-            ChainTestListener.addBrowser(ConfigManager.get("browser"));
-            ChainTestListener.addEnvironment(ConfigManager.get("env"));
-            ChainTestListener.addTestClass(className);
-        } catch (Exception reportingException) {
-            logger.warn("Failed to report test start to ChainTest: {}", reportingException.getMessage());
+        synchronized (TestConstants.class) {
+            TestConstants.testCount++;
         }
+
+        ReportingManager.getInstance().onTestStart(context);
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
-        logger.info("Test passed: {}", testName);
-        ReportUtils.logPass("Test passed successfully: " + testName);
-        tendTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
-        ReportUtils.logInfo(timeLog + CustomTimeUtil.getTimeDifference(tStartTime, tendTime, timeFormat));
-        TestConstants.passedTC++;
+        TestContext context = getOrCreateContext(result);
+
+        synchronized (TestConstants.class) {
+            TestConstants.passedTC++;
+            TestConstants.NUMBEROFPASSES++;
+        }
+
         try {
-            ChainTestListener.passTest();
-        } catch (Exception reportingException) {
-            logger.warn("Failed to report test success to ChainTest: {}", reportingException.getMessage());
+            ReportingManager.getInstance().onTestPass(context);
+            ReportingManager.getInstance().onTestFinish(context);
+        } finally {
+            TestContextManager.clearContext();
         }
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
-        logger.error("Test failed: {}", testName, result.getThrowable());
-        ReportUtils.logFail("Test failed: " + testName, result.getThrowable());
-        tendTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
-        ReportUtils.logInfo(timeLog + CustomTimeUtil.getTimeDifference(tStartTime, tendTime, timeFormat));
-        TestConstants.failedTC++;
+        TestContext context = getOrCreateContext(result);
+
+        synchronized (TestConstants.class) {
+            TestConstants.failedTC++;
+            TestConstants.NUMBEROFFAILURES++;
+        }
+
+        // Automatically capture Playwright failure artifacts before browser is closed
         Page page = null;
         try {
             page = BrowserManager.getPage();
@@ -78,57 +97,45 @@ public class TestListener implements ITestListener {
             // Non-UI tests do not have a Playwright Page initialized
         }
 
-        try {
-            ChainTestListener.failTest(result.getThrowable(), page);
-        } catch (Exception reportingException) {
-            logger.warn("Failed to report test failure to ChainTest: {}", reportingException.getMessage());
+        if (page != null) {
+            ArtifactManager.captureFailureArtifacts(page, context);
         }
 
         try {
-            if (page != null && !page.isClosed()) {
-                String screenshotPath = ScreenshotUtils.captureScreenshot(page, testName);
-                if (screenshotPath != null && !screenshotPath.isEmpty()) {
-                    ReportUtils.logScreenshot(screenshotPath, "Failure Screenshot");
-                }
-            }
-        } catch (Exception e) {
-            logger.warn("Could not capture screenshot on failure for test {}: {}", testName, e.getMessage());
+            ReportingManager.getInstance().onTestFail(context, result.getThrowable());
+            ReportingManager.getInstance().onTestFinish(context);
+        } finally {
+            TestContextManager.clearContext();
         }
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
-        logger.warn("Test skipped: {}", testName);
-        ReportUtils.logInfo("Test skipped: " + testName);
-        tendTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
-        ReportUtils.logInfo(timeLog + CustomTimeUtil.getTimeDifference(tStartTime, tendTime, timeFormat));
-        TestConstants.skippedTC++;
+        TestContext context = getOrCreateContext(result);
+
+        synchronized (TestConstants.class) {
+            TestConstants.skippedTC++;
+            TestConstants.NUMBEROFSKIPS++;
+        }
+
         String skipReason = result.getThrowable() != null
                 ? (result.getThrowable().getMessage() != null ? result.getThrowable().getMessage() : result.getThrowable().toString())
                 : "Test skipped";
+
         try {
-            ChainTestListener.skipTest(skipReason);
-        } catch (Exception reportingException) {
-            logger.warn("Failed to report test skip to ChainTest: {}", reportingException.getMessage());
+            ReportingManager.getInstance().onTestSkip(context, skipReason);
+            ReportingManager.getInstance().onTestFinish(context);
+        } finally {
+            TestContextManager.clearContext();
         }
     }
 
-    @Override
-    public void onStart(ITestContext context) {
-        logger.info("Starting Context/Test Tag: {}", context.getName());
-        TestConstants.ReportName = ReportUtils.sanitizeFilename(context.getCurrentXmlTest().getSuite().getName());
-        TestConstants.startTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
-    }
-
-    @Override
-    public void onFinish(ITestContext context) {
-        logger.info("Finished Context/Test Tag: {}", context.getName());
-        TestConstants.endTime = CustomTimeUtil.getCurrentTime(timeFormat, timezone);
-        try {
-            ChainTestListener.flush();
-        } catch (Exception reportingException) {
-            logger.warn("Failed to flush ChainTest: {}", reportingException.getMessage());
+    private TestContext getOrCreateContext(ITestResult result) {
+        TestContext context = TestContextManager.getContext();
+        if (context == null) {
+            context = TestContextFactory.createTestContext(result);
+            TestContextManager.setContext(context);
         }
+        return context;
     }
 }

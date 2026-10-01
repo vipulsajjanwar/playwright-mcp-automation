@@ -6,6 +6,7 @@
         <listener class-name="framework.listeners.SuiteListener" />
         <listener class-name="framework.listeners.AnnotationTransformer" />
         <listener class-name="framework.listeners.AllureTestListener"/>
+        <listener class-name="framework.listeners.ELKTestListener"/>
     </listeners>
 
     <parameter name="ExecutionID" value="icedq001" />

@@ -30,7 +30,7 @@ public final class AllureUtils {
     private static final String DEFAULT_RESULTS_DIR = "target/allure-results";
 
     /** JVM property: -Dallure.enabled=false. Env var fallback: ALLURE_ENABLED=false. Default: true. */
-    public static final String ENABLED_PROP = "allure.enabled";
+    public static final String ENABLED_PROP = "reporting.allure";
     public static final String ENABLED_ENV = "ALLURE_ENABLED";
 
     private AllureUtils() {

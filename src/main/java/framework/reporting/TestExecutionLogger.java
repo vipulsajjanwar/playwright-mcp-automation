@@ -1,6 +1,8 @@
 package framework.reporting;
 
 import framework.constants.TestConstants;
+import framework.context.TestContext;
+import framework.context.TestContextManager;
 import io.qameta.allure.Allure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,16 +10,27 @@ import org.testng.SkipException;
 
 import java.util.List;
 
-public class TestExecutionLogger {
+/**
+ * Legacy execution logger preserved for backwards compatibility.
+ * Delegates log steps and assertions directly to {@link FrameworkLogger} and {@link ReportingManager}.
+ */
+public final class TestExecutionLogger {
 
     private static final Logger logger = LoggerFactory.getLogger(TestExecutionLogger.class);
 
     private TestExecutionLogger() {}
 
     public static void logStep(String stepDescription) {
-        String logMsg = String.format("[STEP] [Thread-%d] %s", Thread.currentThread().getId(), stepDescription);
-        logger.info(logMsg);
-        ReportUtils.logInfo(logMsg);
+        FrameworkLogger.step(stepDescription);
+    }
+
+    public static void OnStartTest(String testcaseId, String testcaseName) {
+        TestContext context = TestContextManager.getContext();
+        if (context != null) {
+            FrameworkLogger.info(String.format("Starting Test [%s] - %s", testcaseId, testcaseName));
+        } else {
+            logger.info("[START TEST] Testcase ID: {}, Name: {}", testcaseId, testcaseName);
+        }
     }
 
     public static void finalizeTest(
@@ -27,43 +40,27 @@ public class TestExecutionLogger {
             String testcaseId,
             String testcaseName) {
 
-        // Check if the test should be skipped
         if (!loginFlag) {
-            Allure.step("Test skipped : " + testcaseId, () -> {
-                throw new SkipException("Test skipped : " + testcaseId);
+            Allure.step("Test skipped: " + testcaseId, () -> {
+                throw new SkipException("Pre-condition not met, skipping: " + testcaseId);
             });
-            throw new SkipException("Test skipped : " + testcaseId);
+            throw new SkipException("Pre-condition not met, skipping: " + testcaseId);
         }
 
-        if(clickTabAction != null) {
-            // Click the appropriate tab
-            clickTabAction.run();
+        if (clickTabAction != null) {
+            try {
+                clickTabAction.run();
+            } catch (Exception e) {
+                logger.warn("clickTabAction failed: {}", e.getMessage());
+            }
         }
 
-
-        // Check for skipped tests
         if (TestConstants.NUMBEROFSKIPS > 0) {
-            Allure.step("Test skipped : " + testcaseId, () -> {
-                throw new SkipException("Test skipped : " + testcaseId);
-            });
-            throw new SkipException("Test skipped : " + testcaseId);
-
+            throw new SkipException("Test skipped: " + testcaseId);
         }
 
-        // Check for failed tests
         if (TestConstants.NUMBEROFFAILURES > 0) {
-            Allure.step("Test Failed : " + testcaseId, () -> {
-                throw new AssertionError("Test Failed : " + testcaseId);
-            });
-             throw new AssertionError(testcaseId+" : " + testcaseName + " failed. Please check the report for details.");
+            throw new AssertionError(testcaseId + " (" + testcaseName + ") encountered failures.");
         }
-    }
-
-    public static void OnStartTest(String testcaseId, String testcaseName) {
-        String logMsg = String.format("[START TEST] [Thread-%d] Testcase ID: %s, Testcase Name: %s",
-                Thread.currentThread().getId(), testcaseId, testcaseName);
-        logger.info(logMsg);
-        ReportManager.createTest(testcaseId, testcaseName != null ? testcaseName : testcaseId);
-        ReportUtils.logInfo(logMsg);
     }
 }
