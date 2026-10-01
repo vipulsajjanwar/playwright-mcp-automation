@@ -30,7 +30,7 @@ public class ReportManager {
             if (reportFile.getParentFile() != null && !reportFile.getParentFile().exists()) {
                 reportFile.getParentFile().mkdirs();
             }
-
+            logger.info("Initializing ExtentReports at: {}", reportPath);
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
             sparkReporter.config().setDocumentTitle("Playwright Automation Execution Report");
             sparkReporter.config().setReportName(reportName);

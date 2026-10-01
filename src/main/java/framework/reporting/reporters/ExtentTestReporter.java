@@ -41,8 +41,8 @@ public class ExtentTestReporter implements TestReporter {
     public void onSuiteStart(ISuite suite) {
         if (!isEnabled()) return;
         try {
-            String suiteName = suite != null ? suite.getName() : "Automation Suite";
-            ReportManager.getExtentReports(suiteName);
+         //   String suiteName = suite != null ? suite.getName() : "Automation Suite";
+          //  ReportManager.getExtentReports(suiteName);
         } catch (Exception e) {
             logger.warn("Could not pre-initialize ExtentReports onSuiteStart: {}", e.getMessage());
         }

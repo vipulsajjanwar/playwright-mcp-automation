@@ -22,7 +22,7 @@ public final class TestContextFactory {
         String suiteName = (result != null && result.getTestContext() != null && result.getTestContext().getSuite() != null)
                 ? result.getTestContext().getSuite().getName()
                 : (TestConstants.SuiteName != null && !TestConstants.SuiteName.isBlank() ? TestConstants.SuiteName : "TestSuite");
-
+        TestConstants.SuiteName=suiteName;
         String className = result != null && result.getTestClass() != null
                 ? result.getTestClass().getRealClass().getSimpleName()
                 : "UnknownClass";

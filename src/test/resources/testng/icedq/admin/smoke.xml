@@ -3,10 +3,10 @@
 <suite name="Smoke Test_Suite" verbose="1">
     <listeners>
         <listener class-name="framework.listeners.TestListener" />
-        <listener class-name="framework.listeners.SuiteListener" />
-        <listener class-name="framework.listeners.AnnotationTransformer" />
-        <listener class-name="framework.listeners.AllureTestListener"/>
-        <listener class-name="framework.listeners.ELKTestListener"/>
+<!--        <listener class-name="framework.listeners.SuiteListener" />-->
+<!--        <listener class-name="framework.listeners.AnnotationTransformer" />-->
+<!--        <listener class-name="framework.listeners.AllureTestListener"/>-->
+<!--        <listener class-name="framework.listeners.ELKTestListener"/>-->
     </listeners>
 
     <parameter name="ExecutionID" value="icedq001" />
@@ -21,6 +21,7 @@
         <classes>
             <class name="tests.icedq.admin.LoginTest">
                 <methods>
+                    <include name="testLoginPageNavigation" />
                     <include name="testLoginPageNavigation" />
 
                 </methods>
