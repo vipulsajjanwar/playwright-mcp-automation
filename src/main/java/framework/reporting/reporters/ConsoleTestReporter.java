@@ -49,8 +49,21 @@ public class ConsoleTestReporter implements TestReporter {
     @Override
     public void onStep(TestContext context, String message) {
         if (!isEnabled()) return;
+
         long threadId = context != null ? context.getThreadId() : Thread.currentThread().getId();
-        logger.info("[STEP] [Thread: {}] {}", threadId, message);
+        String msg = message != null ? message.trim() : "";
+
+        if (msg.startsWith("[PASS]")) {
+            logger.info("[PASS] [Thread: {}] {}", threadId, msg);
+        } else if (msg.startsWith("[FAIL]") || msg.startsWith("[ERROR]")) {
+            logger.error("[STEP] [Thread: {}] {}", threadId, msg);
+        } else if (msg.startsWith("[WARN]")) {
+            logger.warn("[STEP] [Thread: {}] {}", threadId, msg);
+        } else if (msg.startsWith("[SKIP]")) {
+            logger.warn("[SKIP] [Thread: {}] {}", threadId, msg);
+        } else {
+            logger.info("[STEP] [Thread: {}] {}", threadId, msg);
+        }
     }
 
     @Override

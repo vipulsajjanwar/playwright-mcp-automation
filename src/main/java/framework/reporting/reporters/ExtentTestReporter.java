@@ -95,10 +95,25 @@ public class ExtentTestReporter implements TestReporter {
 
     @Override
     public void onStep(TestContext context, String message) {
-        if (!isEnabled() || context == null) return;
+        if (!isEnabled() || context == null || message == null) return;
+
         ExtentTest test = getExtentTest(context);
-        if (test != null) {
-            test.log(Status.INFO, MarkupHelper.createLabel(message, ExtentColor.TRANSPARENT));
+        if (test == null) return;
+
+        String msg = message.trim();
+
+        if (msg.startsWith("[PASS]")) {
+            test.log(Status.PASS, MarkupHelper.createLabel(msg, ExtentColor.GREEN));
+        } else if (msg.startsWith("[FAIL]")) {
+            test.log(Status.FAIL, MarkupHelper.createLabel(msg, ExtentColor.RED));
+        } else if (msg.startsWith("[ERROR]")) {
+            test.log(Status.FAIL, MarkupHelper.createLabel(msg, ExtentColor.RED));
+        } else if (msg.startsWith("[WARN]")) {
+            test.log(Status.WARNING, MarkupHelper.createLabel(msg, ExtentColor.ORANGE));
+        } else if (msg.startsWith("[SKIP]")) {
+            test.log(Status.SKIP, MarkupHelper.createLabel(msg, ExtentColor.AMBER));
+        } else {
+            test.log(Status.INFO, MarkupHelper.createLabel(msg, ExtentColor.TRANSPARENT));
         }
     }
 
@@ -115,26 +130,22 @@ public class ExtentTestReporter implements TestReporter {
     @Override
     public void onTestFail(TestContext context, Throwable throwable) {
         if (!isEnabled() || context == null) return;
+
         ExtentTest test = getExtentTest(context);
         if (test != null) {
             String msg = throwable != null ? throwable.getMessage() : "Test failed";
-            test.log(Status.FAIL, MarkupHelper.createLabel("Test Failed: " + msg, ExtentColor.RED));
 
-            if (throwable != null) {
-                test.log(Status.FAIL, throwable);
-            }
-
-            // Attach screenshot if present
             byte[] bytes = context.getLatestScreenshotBytes();
             if (bytes != null && bytes.length > 0) {
                 String base64 = Base64.getEncoder().encodeToString(bytes);
-                test.fail("Failure Screenshot", MediaEntityBuilder.createScreenCaptureFromBase64String(base64).build());
-            } else if (!context.getScreenshotPaths().isEmpty()) {
-                String path = context.getScreenshotPaths().get(context.getScreenshotPaths().size() - 1);
-                File file = new File(path);
-                if (file.exists()) {
-                    test.fail("Failure Screenshot", MediaEntityBuilder.createScreenCaptureFromPath(path).build());
-                }
+                test.fail("Test Failed: " + msg,
+                        MediaEntityBuilder.createScreenCaptureFromBase64String(base64).build());
+            } else {
+                test.fail("Test Failed: " + msg);
+            }
+
+            if (throwable != null) {
+                test.fail(throwable);
             }
         }
     }

@@ -6,22 +6,26 @@ import framework.config.ReportingConfig;
 import framework.context.TestContext;
 import framework.reporting.TestReporter;
 import framework.utils.AllureUtils;
-import io.qameta.allure.Allure;
+import framework.reporting.allure.AllureHistoryManager;
+import framework.reporting.allure.AllureReportManager;
+import framework.reporting.allure.ReportPathManager;
 import io.qameta.allure.SeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ISuite;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Allure implementation of {@link TestReporter}.
- * Dynamically binds {@link framework.annotations.CustomTest} metadata into Allure Epics,
- * Features, Stories, Severities, Links, and Tags without requiring boilerplate Allure annotations.
+ * Dynamically binds framework runtime metadata into Allure without requiring
+ * per-test boilerplate annotations.
  */
 public class AllureTestReporter implements TestReporter {
 
@@ -39,50 +43,59 @@ public class AllureTestReporter implements TestReporter {
 
     @Override
     public void onSuiteStart(ISuite suite) {
-        if (!isEnabled()) return;
+        if (!isEnabled()) {
+            return;
+        }
+
         try {
-            AllureUtils.writeEnvironment(Map.of(
-                    "Base URL", ConfigManager.get("baseUrl", "http://localhost"),
-                    "Browser", ConfigManager.get("browser", "chromium"),
-                    "Environment", ConfigManager.get("env", "qa"),
-                    "Java", System.getProperty("java.version"),
-                    "OS", System.getProperty("os.name")
-            ));
+            String suiteName = suite != null ? suite.getName() : "Playwright Automation Suite";
+            ReportPathManager.ExecutionPaths paths = ReportPathManager.initializeExecutionPaths(suiteName);
+            AllureHistoryManager.preserveHistory(paths.suiteName(), paths.resultsDir(), paths.executionDir());
+
+            AllureUtils.writeEnvironment(buildEnvironmentDetails());
             AllureUtils.writeDefaultCategories();
+            writeExecutorDetails(suite);
         } catch (Exception e) {
-            logger.warn("Failed to populate Allure environment metadata: {}", e.getMessage());
+            logger.warn("Failed to populate Allure suite metadata: {}", e.getMessage(), e);
         }
     }
 
     @Override
     public void onTestStart(TestContext context) {
-        if (!isEnabled() || context == null) return;
+        if (!isEnabled() || context == null) {
+            return;
+        }
 
         try {
             TestMetadata metadata = context.getMetadata();
 
-            // Dynamic test name & description
-            AllureUtils.testName(context.getTestName());
-            if (metadata != null && !metadata.getDescription().isBlank()) {
+            // Dynamic test name
+            String displayName = context.getTestName();
+            if (context.getBrowser() != null && !context.getBrowser().isBlank()) {
+                displayName = displayName + " [" + context.getBrowser() + "]";
+            }
+            AllureUtils.testName(displayName);
+
+            // Description
+            if (metadata != null && metadata.getDescription() != null && !metadata.getDescription().isBlank()) {
                 AllureUtils.description(metadata.getDescription());
             }
 
             if (metadata != null) {
-                // Epic & Feature
-                if (!metadata.getModule().isBlank()) {
+                // Epic / Feature / Story
+                if (notBlank(metadata.getModule())) {
                     AllureUtils.epic(metadata.getModule());
-                } else if (!metadata.getService().isBlank()) {
+                } else if (notBlank(metadata.getService())) {
                     AllureUtils.epic(metadata.getService());
                 }
 
-                if (!metadata.getFeature().isBlank()) {
+                if (notBlank(metadata.getFeature())) {
                     AllureUtils.feature(metadata.getFeature());
                 }
 
-                // Story
-                if (!metadata.getStoryId().isBlank()) {
+                if (notBlank(metadata.getStoryId())) {
                     AllureUtils.story(metadata.getStoryId());
-                } else if (!metadata.getSubFeature().isBlank()) {
+                } else if (notBlank(metadata.getSubFeature())) {
                     AllureUtils.story(metadata.getSubFeature());
                 }
 
@@ -90,56 +103,83 @@ public class AllureTestReporter implements TestReporter {
                 AllureUtils.severity(mapSeverity(metadata.getSeverity()));
 
                 // Owner / Author
-                if (!metadata.getEffectiveAuthor().isBlank()) {
+                if (notBlank(metadata.getEffectiveAuthor())) {
                     AllureUtils.owner(metadata.getEffectiveAuthor());
                 }
 
                 // Links
-                if (!metadata.getJiraId().isBlank()) {
+                if (notBlank(metadata.getJiraId())) {
                     AllureUtils.issue(metadata.getJiraId(), metadata.getJiraId());
                 }
-                if (!metadata.getRequirementId().isBlank()) {
+
+                if (notBlank(metadata.getRequirementId())) {
                     AllureUtils.tms(metadata.getRequirementId(), metadata.getRequirementId());
                 }
 
                 // Tags
-                if (!metadata.getCategory().isBlank()) {
+                if (notBlank(metadata.getCategory())) {
                     AllureUtils.tag(metadata.getCategory());
                 }
-                if (!metadata.getTestType().isBlank()) {
+
+                if (notBlank(metadata.getTestType())) {
                     AllureUtils.tag(metadata.getTestType());
                 }
-                if (!metadata.getPriority().isBlank()) {
+
+                if (notBlank(metadata.getPriority())) {
                     AllureUtils.tag("Priority:" + metadata.getPriority());
                 }
-                for (String t : metadata.getTags()) {
-                    if (!t.isBlank()) {
-                        AllureUtils.tag(t);
+
+                for (String tag : metadata.getTags()) {
+                    if (notBlank(tag)) {
+                        AllureUtils.tag(tag);
                     }
                 }
             }
 
-            // Environment / Browser parameters
-            if (context.getBrowser() != null) {
+            // Runtime parameters
+            if (notBlank(context.getBrowser())) {
                 AllureUtils.parameter("Browser", context.getBrowser());
             }
-            if (context.getEnvironment() != null) {
+
+            if (notBlank(context.getEnvironment())) {
                 AllureUtils.parameter("Environment", context.getEnvironment());
             }
+
+            if (notBlank(context.getSuiteName())) {
+                AllureUtils.parameter("Suite", context.getSuiteName());
+            }
+
+            if (notBlank(context.getClassName())) {
+                AllureUtils.parameter("Class", context.getClassName());
+            }
+
+            if (notBlank(context.getMethodName())) {
+                AllureUtils.parameter("Method", context.getMethodName());
+            }
+
+            if (notBlank(context.getExecutionId())) {
+                AllureUtils.parameter("Execution ID", context.getExecutionId());
+            }
         } catch (Exception e) {
-            logger.warn("Failed to apply Allure metadata: {}", e.getMessage());
+            logger.warn("Failed to apply Allure metadata: {}", e.getMessage(), e);
         }
     }
 
     @Override
     public void onStep(TestContext context, String message) {
-        if (!isEnabled()) return;
-        AllureUtils.logStep(message);
+        if (!isEnabled() || message == null || message.isBlank()) {
+            return;
+        }
+
+        AllureUtils.logStep(message.trim());
     }
 
     @Override
     public void onTestPass(TestContext context) {
-        if (!isEnabled() || context == null) return;
+        if (!isEnabled() || context == null) {
+            return;
+        }
+
         AllureUtils.step("Test Completed Successfully", () -> {
             AllureUtils.attachText("Duration", context.getDurationMs() + " ms");
         });
@@ -147,61 +187,144 @@ public class AllureTestReporter implements TestReporter {
 
     @Override
     public void onTestFail(TestContext context, Throwable throwable) {
-        if (!isEnabled() || context == null) return;
+        if (!isEnabled() || context == null) {
+            return;
+        }
 
         try {
-            // Attach exception stack trace
             if (throwable != null) {
                 AllureUtils.attachStackTrace("Stack Trace", throwable);
-            } else if (context.getFailureReason() != null) {
-                AllureUtils.attachText("Failure Reason", context.getFailureReason());
+            } else {
+                attachText("Failure Reason", context.getFailureReason());
             }
 
-            // Attach screenshot
-            byte[] screenshotBytes = context.getLatestScreenshotBytes();
-            if (screenshotBytes != null && screenshotBytes.length > 0) {
-                AllureUtils.attachScreenshot("Screenshot on Failure", screenshotBytes);
-            } else if (!context.getScreenshotPaths().isEmpty()) {
-                String path = context.getScreenshotPaths().get(context.getScreenshotPaths().size() - 1);
-                try {
-                    byte[] bytes = Files.readAllBytes(Paths.get(path));
-                    AllureUtils.attachScreenshot("Screenshot on Failure", bytes);
-                } catch (Exception ignored) {}
-            }
+            resolveScreenshot(context)
+                    .ifPresent(bytes -> AllureUtils.attachScreenshot("Screenshot on Failure", bytes));
 
-            // Attach Page URL & HTML
-            if (context.getPageUrl() != null && !context.getPageUrl().isBlank()) {
-                AllureUtils.attachText("Page URL", context.getPageUrl());
-            }
-            if (context.getPageSourceHtml() != null && !context.getPageSourceHtml().isBlank()) {
-                AllureUtils.attachHtml("Page HTML Source", "<pre>" + AllureUtils.escape(context.getPageSourceHtml()) + "</pre>");
-            }
+            attachText("Page URL", context.getPageUrl());
+            attachText("Playwright Trace Path", context.getTracePath());
+            attachText("Playwright Video Path", context.getVideoPath());
 
-            // Attach Trace & Video references
-            if (context.getTracePath() != null && !context.getTracePath().isBlank()) {
-                AllureUtils.attachText("Playwright Trace Path", context.getTracePath());
-            }
-            if (context.getVideoPath() != null && !context.getVideoPath().isBlank()) {
-                AllureUtils.attachText("Playwright Video Path", context.getVideoPath());
+            String html = context.getPageSourceHtml();
+            if (notBlank(html)) {
+                AllureUtils.attachHtml("Page HTML Source", "<pre>" + AllureUtils.escape(html) + "</pre>");
             }
         } catch (Exception e) {
-            logger.warn("Error capturing Allure failure attachments: {}", e.getMessage());
+            logger.warn("Error capturing Allure failure attachments: {}", e.getMessage(), e);
         }
     }
 
     @Override
     public void onTestSkip(TestContext context, String reason) {
-        if (!isEnabled()) return;
-        AllureUtils.attachText("Skip Reason", reason != null ? reason : "Skipped");
+        if (!isEnabled()) {
+            return;
+        }
+
+        AllureUtils.attachText("Skip Reason", notBlank(reason) ? reason : "Skipped");
     }
 
     @Override
     public void onTestFinish(TestContext context) {
-        // Test complete
+        // no-op
+    }
+
+    @Override
+    public void onSuiteFinish(ISuite suite) {
+        if (!isEnabled()) {
+            return;
+        }
+
+        try {
+            String suiteName = suite != null ? suite.getName() : "Playwright Automation Suite";
+            AllureReportManager.onSuiteFinish(suiteName);
+        } catch (Exception e) {
+            logger.warn("Failed to complete Allure suite finish actions: {}", e.getMessage(), e);
+        }
+    }
+
+    private static void attachText(String name, String value) {
+        if (notBlank(value)) {
+            AllureUtils.attachText(name, value);
+        }
+    }
+
+    private Optional<byte[]> resolveScreenshot(TestContext context) {
+        byte[] bytes = context.getLatestScreenshotBytes();
+        if (bytes != null && bytes.length > 0) {
+            return Optional.of(bytes);
+        }
+
+        List<String> paths = context.getScreenshotPaths();
+        if (paths == null || paths.isEmpty()) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(Files.readAllBytes(Paths.get(paths.get(paths.size() - 1))));
+        } catch (IOException e) {
+            logger.debug("Could not read screenshot file: {}", e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    private Map<String, String> buildEnvironmentDetails() {
+        Map<String, String> env = new LinkedHashMap<>();
+
+        env.put("Base URL", defaultIfBlank(ConfigManager.get("baseUrl"), "http://localhost"));
+        env.put("Browser", defaultIfBlank(ConfigManager.get("browser"), "chromium"));
+        env.put("Environment", defaultIfBlank(ConfigManager.get("env"), "qa"));
+        env.put("Java", defaultIfBlank(System.getProperty("java.version"), "unknown"));
+        env.put("OS", defaultIfBlank(System.getProperty("os.name"), "unknown"));
+        env.put("OS Version", defaultIfBlank(System.getProperty("os.version"), "unknown"));
+
+        return env;
+    }
+
+    private void writeExecutorDetails(ISuite suite) {
+        String buildUrl = firstNonBlank(
+                System.getenv("BUILD_URL"),
+                System.getProperty("BUILD_URL"),
+                ""
+        );
+
+        String jobName = firstNonBlank(
+                System.getenv("JOB_NAME"),
+                System.getenv("BUILD_TAG"),
+                suite != null ? suite.getName() : "Local Run"
+        );
+
+        String executorName;
+        String executorType;
+        String executorUrl;
+
+        if (notBlank(System.getenv("JENKINS_URL")) || notBlank(System.getenv("BUILD_URL"))) {
+            executorName = "Jenkins";
+            executorType = "jenkins";
+            executorUrl = firstNonBlank(System.getenv("JENKINS_URL"), "");
+        } else if (notBlank(System.getenv("GITHUB_ACTIONS"))) {
+            executorName = "GitHub Actions";
+            executorType = "github";
+            executorUrl = "";
+        } else {
+            executorName = "Local Execution";
+            executorType = "local";
+            executorUrl = "";
+        }
+
+        AllureUtils.writeExecutor(
+                executorName,
+                executorType,
+                executorUrl,
+                jobName,
+                buildUrl
+        );
     }
 
     private SeverityLevel mapSeverity(String severity) {
-        if (severity == null) return SeverityLevel.NORMAL;
+        if (severity == null) {
+            return SeverityLevel.NORMAL;
+        }
+
         return switch (severity.trim().toUpperCase()) {
             case "BLOCKER" -> SeverityLevel.BLOCKER;
             case "CRITICAL" -> SeverityLevel.CRITICAL;
@@ -209,5 +332,26 @@ public class AllureTestReporter implements TestReporter {
             case "TRIVIAL" -> SeverityLevel.TRIVIAL;
             default -> SeverityLevel.NORMAL;
         };
+    }
+
+    private static boolean notBlank(String value) {
+        return value != null && !value.isBlank();
+    }
+
+    private static String defaultIfBlank(String value, String fallback) {
+        return notBlank(value) ? value : fallback;
+    }
+
+    private static String firstNonBlank(String... values) {
+        if (values == null) {
+            return "";
+        }
+
+        for (String value : values) {
+            if (notBlank(value)) {
+                return value;
+            }
+        }
+        return "";
     }
 }

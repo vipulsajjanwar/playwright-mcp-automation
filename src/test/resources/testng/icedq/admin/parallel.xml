@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Cross Browser Suite" verbose="1" parallel="tests" thread-count="4">
+    <listeners>
+        <listener class-name="framework.listeners.TestListener" />
+
+    </listeners>
+
+    <test name="Chrome Tests">
+        <parameter name="ExecutionID" value="chrome_run" />
+        <parameter name="browser" value="chrome" />
+        <classes>
+            <class name="tests.icedq.admin.LoginTest">
+                <methods>
+                    <include name="testLoginPageNavigation" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Firefox Tests">
+        <parameter name="ExecutionID" value="firefox_run" />
+        <parameter name="browser" value="firefox" />
+        <classes>
+            <class name="tests.icedq.admin.LoginTest">
+                <methods>
+                    <include name="testLoginPageNavigation" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Edge Tests">
+        <parameter name="ExecutionID" value="edge_run" />
+        <parameter name="browser" value="msedge" />
+        <classes>
+            <class name="tests.icedq.admin.LoginTest">
+                <methods>
+                    <include name="testLoginPageNavigation" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="Chromium Tests">
+        <parameter name="ExecutionID" value="chromium_run" />
+        <parameter name="browser" value="chromium" />
+        <classes>
+            <class name="tests.icedq.admin.LoginTest">
+                <methods>
+                    <include name="testLoginPageNavigation" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+</suite>

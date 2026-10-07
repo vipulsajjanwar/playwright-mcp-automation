@@ -43,9 +43,19 @@ public final class TestContextFactory {
                 ? TestConstants.ExecutionID
                 : UUID.randomUUID().toString();
 
-        String browser = metadata.getBrowser() != null && !metadata.getBrowser().isBlank()
-                ? metadata.getBrowser()
-                : ConfigManager.get("browser", "chromium");
+        String browser = metadata.getBrowser();
+
+        if (browser == null || browser.isBlank()) {
+            if (result != null
+                    && result.getTestContext() != null
+                    && result.getTestContext().getCurrentXmlTest() != null) {
+                browser = result.getTestContext().getCurrentXmlTest().getParameter("browser");
+            }
+        }
+
+        if (browser == null || browser.isBlank()) {
+            browser = ConfigManager.get("browser", "chromium");
+        }
 
         String environment = metadata.getEnvironment() != null && !metadata.getEnvironment().isBlank()
                 ? metadata.getEnvironment()

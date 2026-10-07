@@ -10,10 +10,7 @@ import framework.config.ChainTestConfig;
 import framework.config.ConfigManager;
 import framework.constants.FrameworkConstants;
 import framework.constants.TestConstants;
-import framework.reporting.ChainTestContext;
-import framework.reporting.ChainTestLogger;
-import framework.reporting.LogLevel;
-import framework.reporting.TestStatus;
+import framework.reporting.*;
 import framework.utils.ChainTestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +36,49 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChainTestListener implements ITestListener, ISuiteListener {
 
+//    private static final Logger logger = LoggerFactory.getLogger(ChainTestListener.class);
+//
+//    private static final ThreadLocal<ChainTestContext> CURRENT_TEST =
+//            new ThreadLocal<>();
+//
+//    private static final ChainPluginService SERVICE = new ChainPluginService("testng");
+//    private static final AtomicBoolean SERVICE_STARTED = new AtomicBoolean(false);
+//
+//    private static final Map<String, Test> SUITES = new ConcurrentHashMap<>();
+//    private static final Map<String, Test> CLASSES = new ConcurrentHashMap<>();
+//    private static final Set<String> FLUSHED_SUITES = ConcurrentHashMap.newKeySet();
+//
+//    private static final DateTimeFormatter TIMESTAMP_FORMAT =
+//            DateTimeFormatter.ofPattern(ConfigManager.get("timestamp.format", "yyyy-MM-dd HH:mm:ss"));
+//
+//    private static final String RUN_TIMESTAMP =
+//            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+//
+//    private static volatile Path chainTestOutputDir;
+//    private static volatile Path chainTestHtmlFile;
+//    private static volatile Path chainTestEmailFile;
+
+//    private static void prepareChainTestOutput(ISuite suite) {
+//        String suiteName = suite != null ? suite.getName() : "Playwright_Automation_Suite";
+//        String safeSuiteName = ReportUtils.sanitizeFilename(suiteName);
+//
+//        chainTestOutputDir = Paths.get("reports", "chaintest", safeSuiteName);
+//        chainTestHtmlFile = chainTestOutputDir.resolve(safeSuiteName + "_" + RUN_TIMESTAMP + ".html");
+//        chainTestEmailFile = chainTestOutputDir.resolve("Email_" + safeSuiteName + "_" + RUN_TIMESTAMP + ".html");
+//
+//        System.setProperty("chaintest.generator.simple.output-file", chainTestHtmlFile.toString());
+//        System.setProperty("chaintest.generator.email.output-file", chainTestEmailFile.toString());
+//        System.setProperty("chaintest.report.path", chainTestOutputDir.toString());
+//    }
+
     private static final Logger logger = LoggerFactory.getLogger(ChainTestListener.class);
 
-    private static final ThreadLocal<ChainTestContext> CURRENT_TEST =
-            new ThreadLocal<>();
+    private static final ThreadLocal<ChainTestContext> CURRENT_TEST = new ThreadLocal<>();
 
     private static final ChainPluginService SERVICE = new ChainPluginService("testng");
     private static final AtomicBoolean SERVICE_STARTED = new AtomicBoolean(false);
+    private static final AtomicBoolean REPORT_OUTPUT_PREPARED = new AtomicBoolean(false);
+    private static final AtomicBoolean EXECUTION_FINISHED = new AtomicBoolean(false);
 
     private static final Map<String, Test> SUITES = new ConcurrentHashMap<>();
     private static final Map<String, Test> CLASSES = new ConcurrentHashMap<>();
@@ -53,6 +86,61 @@ public class ChainTestListener implements ITestListener, ISuiteListener {
 
     private static final DateTimeFormatter TIMESTAMP_FORMAT =
             DateTimeFormatter.ofPattern(ConfigManager.get("timestamp.format", "yyyy-MM-dd HH:mm:ss"));
+
+    private static final String RUN_TIMESTAMP =
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+
+    private static volatile Path chainTestOutputDir;
+    private static volatile Path chainTestHtmlFile;
+    private static volatile Path chainTestEmailFile;
+    private static volatile String configuredSuiteName;
+
+    private static final Object TREE_LOCK = new Object();
+
+    private static synchronized void prepareChainTestOutput(ISuite suite) {
+        if (REPORT_OUTPUT_PREPARED.get()) {
+            if (suite != null
+                    && configuredSuiteName != null
+                    && !configuredSuiteName.equals(suite.getName())) {
+                logger.warn(
+                        "ChainTest output is already configured for suite [{}]. "
+                                + "Current suite [{}] will use the same JVM-level ChainTest service/report.",
+                        configuredSuiteName,
+                        suite.getName()
+                );
+            }
+            return;
+        }
+
+        String suiteName = (suite != null && suite.getName() != null && !suite.getName().isBlank())
+                ? suite.getName()
+                : (TestConstants.SuiteName != null && !TestConstants.SuiteName.isBlank()
+                ? TestConstants.SuiteName
+                : "Playwright_Automation_Suite");
+
+        configuredSuiteName = suiteName;
+        String safeSuiteName = ReportUtils.sanitizeFilename(suiteName);
+
+        chainTestOutputDir = Paths.get(FrameworkConstants.REPORT_DIR,"chaintest");//Paths.get("reports", "chaintest", safeSuiteName).toAbsolutePath();
+        chainTestHtmlFile = chainTestOutputDir.resolve(safeSuiteName + "_" + RUN_TIMESTAMP + ".html");
+        chainTestEmailFile = chainTestOutputDir.resolve("Email_" + safeSuiteName + "_" + RUN_TIMESTAMP + ".html");
+
+        try {
+            Files.createDirectories(chainTestOutputDir);
+        } catch (Exception e) {
+            logger.warn("Unable to create ChainTest output directory {}: {}", chainTestOutputDir, e.getMessage());
+        }
+
+        System.setProperty("chaintest.generator.simple.output-file", chainTestHtmlFile.toString());
+        System.setProperty("chaintest.generator.email.output-file", chainTestEmailFile.toString());
+        System.setProperty("chaintest.report.path", chainTestOutputDir.toString());
+
+        REPORT_OUTPUT_PREPARED.set(true);
+
+        logger.info("ChainTest HTML output configured at: {}", chainTestHtmlFile);
+        logger.info("ChainTest email output configured at: {}", chainTestEmailFile);
+    }
+
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -70,41 +158,48 @@ public class ChainTestListener implements ITestListener, ISuiteListener {
             return;
         }
 
-        if (!SERVICE_STARTED.getAndSet(true)) {
-            long totalStart = System.currentTimeMillis();
-            try {
-                logger.info("========== ChainTest Service Initialization START ==========");
-                long start = System.currentTimeMillis();
-                logger.info("Starting ChainPluginService...");
-                SERVICE.start();
-                logger.info(
-                        "ChainPluginService.start() completed in {} ms",
-                        System.currentTimeMillis() - start
-                );
-                start = System.currentTimeMillis();
-                SERVICE.addSystemInfo("OS", System.getProperty("os.name"));
-                logger.info(
-                        "Added OS info in {} ms",
-                        System.currentTimeMillis() - start
-                );
-                SERVICE.addSystemInfo("Java", System.getProperty("java.version"));
-                String env = ConfigManager.get("env");
-                if (env != null && !env.isBlank()) {
-                    SERVICE.addSystemInfo("Environment", env);
-                }
-                String browser = ConfigManager.get("browser");
-                if (browser != null && !browser.isBlank()) {
-                    SERVICE.addSystemInfo("Browser", browser);
-                }
-                String baseUrl = ConfigManager.get("baseUrl");
-                if (baseUrl != null && !baseUrl.isBlank()) {
-                    SERVICE.addSystemInfo("Base URL", baseUrl);
-                }
-            } catch (Exception e) {
-                logger.warn("Failed to initialize ChainTest service: {}", e.getMessage());
+        if (!SERVICE_STARTED.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            // Fallback protection in case suite listener order changes
+            prepareChainTestOutput(null);
+
+            logger.info("========== ChainTest Service Initialization START ==========");
+            long start = System.currentTimeMillis();
+
+            logger.info("Starting ChainPluginService...");
+            SERVICE.start();
+
+            logger.info(
+                    "ChainPluginService.start() completed in {} ms",
+                    System.currentTimeMillis() - start
+            );
+
+            SERVICE.addSystemInfo("OS", System.getProperty("os.name"));
+            SERVICE.addSystemInfo("Java", System.getProperty("java.version"));
+
+            String env = ConfigManager.get("env");
+            if (env != null && !env.isBlank()) {
+                SERVICE.addSystemInfo("Environment", env);
             }
+
+            String browser = ConfigManager.get("browser");
+            if (browser != null && !browser.isBlank()) {
+                SERVICE.addSystemInfo("Browser", browser);
+            }
+
+            String baseUrl = ConfigManager.get("baseUrl");
+            if (baseUrl != null && !baseUrl.isBlank()) {
+                SERVICE.addSystemInfo("Base URL", baseUrl);
+            }
+        } catch (Exception e) {
+            SERVICE_STARTED.set(false);
+            logger.warn("Failed to initialize ChainTest service: {}", e.getMessage(), e);
         }
     }
+
 
     private static Test getOrCreateSuite(String suiteName) {
         if (suiteName == null || suiteName.isBlank()) {
@@ -121,12 +216,16 @@ public class ChainTestListener implements ITestListener, ISuiteListener {
     private static Test getOrCreateClass(Test suite, String className) {
         final String finalClassName = (className == null || className.isBlank()) ? "DefaultClass" : className;
         final String key = suite.getName() + "::" + finalClassName;
-        return CLASSES.computeIfAbsent(key, k -> {
-            Test classTest = new Test(finalClassName);
-            suite.addChild(classTest);
-            return classTest;
-        });
+
+        synchronized (TREE_LOCK) {
+            return CLASSES.computeIfAbsent(key, k -> {
+                Test classTest = new Test(finalClassName);
+                suite.addChild(classTest);
+                return classTest;
+            });
+        }
     }
+
 
     // ============================================================
     // TEST LIFECYCLE
@@ -162,7 +261,8 @@ public class ChainTestListener implements ITestListener, ISuiteListener {
             }
             classTest.addChild(methodTest);
 
-            ChainTestContext context = new ChainTestContext(testName, Thread.currentThread().getId());
+            ChainTestContext context = new ChainTestContext(testName, Thread.currentThread().threadId());
+
             context.setChainTestNode(methodTest);
             context.setClassName(className);
             CURRENT_TEST.set(context);
@@ -328,6 +428,12 @@ public class ChainTestListener implements ITestListener, ISuiteListener {
             return;
         }
         log(LogLevel.FAIL, message);
+    }
+    public static void skip(String message) {
+        if (!ChainTestUtil.isEnabled()) {
+            return;
+        }
+        log(LogLevel.WARN, message);
     }
 
     public static void debug(String message) {
@@ -621,6 +727,14 @@ public class ChainTestListener implements ITestListener, ISuiteListener {
             return;
         }
 
+        if (!SERVICE_STARTED.get()) {
+            return;
+        }
+
+        if (!EXECUTION_FINISHED.compareAndSet(false, true)) {
+            return;
+        }
+
         try {
             endCurrentTestIfRequired();
 
@@ -637,11 +751,19 @@ public class ChainTestListener implements ITestListener, ISuiteListener {
 
             SERVICE.flush();
             SERVICE.executionFinished();
-            logger.info("ChainTest report successfully generated in target/chaintest");
+
+            if (chainTestHtmlFile != null) {
+                logger.info("ChainTest report successfully generated at: {}", chainTestHtmlFile.toAbsolutePath());
+            } else if (chainTestOutputDir != null) {
+                logger.info("ChainTest report successfully generated under: {}", chainTestOutputDir.toAbsolutePath());
+            } else {
+                logger.info("ChainTest report successfully generated");
+            }
         } catch (Exception e) {
             logger.warn("Failed to finalize ChainTest report: {}", e.getMessage(), e);
         }
     }
+
 
     // ============================================================
     // TESTNG LISTENER INTERFACE IMPLEMENTATION
@@ -699,8 +821,10 @@ public class ChainTestListener implements ITestListener, ISuiteListener {
         if (!ChainTestUtil.isEnabled()) {
             return;
         }
+
+        prepareChainTestOutput(suite);
         ensureServiceStarted();
-        getOrCreateSuite(suite.getName());
+        getOrCreateSuite(suite != null ? suite.getName() : null);
     }
 
     @Override
@@ -710,20 +834,28 @@ public class ChainTestListener implements ITestListener, ISuiteListener {
 
     @Override
     public void onStart(ITestContext context) {
+        // no-op
     }
 
     @Override
     public void onFinish(ITestContext context) {
-        flush();
+        // no-op
+        // Avoid duplicate JVM-level ChainTest finalization.
+        // Suite-level onFinish + shutdown hook are enough.
     }
+
 
     // ============================================================
     // FILE UTILITIES
     // ============================================================
 
     private static Path getReportDirectory() {
+        if (chainTestOutputDir != null) {
+            return chainTestOutputDir;
+        }
+
         String configuredPath = FrameworkConstants.REPORT_DIR;
-        return Paths.get(configuredPath);
+        return Paths.get(configuredPath).toAbsolutePath();
     }
 
     private static Path getScreenshotDirectory() {

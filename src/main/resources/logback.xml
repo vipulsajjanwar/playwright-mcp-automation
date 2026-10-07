@@ -1,41 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+    <!-- Resolved once at startup, so each run gets its own filename -->
+    <timestamp key="runTs" datePattern="yyyyMMdd_HHmmss_SSS"/>
+
+    <!-- Overridable via -DREPORT_DIR=... or an environment variable -->
     <property name="REPORT_DIR" value="${REPORT_DIR:-reports}"/>
-    <property name="SUITE_NAME" value="${SUITE_NAME:-default}" />
-    <appender name="CONSOLE"
-              class="ch.qos.logback.core.ConsoleAppender">
+    <property name="SUITE_NAME" value="${SUITE_NAME:-default}"/>
 
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>
-                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
-            </pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
-
     </appender>
 
-    <appender name="FILE"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-
-        <file>
-            ${REPORT_DIR}/log/ExecutionLog.log
-        </file>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-
-            <fileNamePattern>
-                ${REPORT_DIR}/log/framework-%d{yyyy-MM-dd}.log
-            </fileNamePattern>
-
-            <maxHistory>30</maxHistory>
-
-        </rollingPolicy>
-
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${REPORT_DIR}/log/log-${runTs}.log</file>
+        <append>false</append>
         <encoder>
-            <pattern>
-                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
-            </pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
-
     </appender>
 
     <root level="INFO">

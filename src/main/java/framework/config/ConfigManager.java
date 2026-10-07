@@ -41,7 +41,7 @@ public class ConfigManager {
             return val.trim();
         }
 
-        // 3. Environment specific property
+        // 3. Environment specific properties file
         val = envConfigProps.getProperty(key);
         if (val != null && !val.trim().isEmpty()) {
             return val.trim();
@@ -49,6 +49,11 @@ public class ConfigManager {
 
         // 4. Default property
         val = defaultConfigProps.getProperty(key);
+        if (val != null && !val.trim().isEmpty()) {
+            return val.trim();
+        }
+        // 5. EnvConfig (from .env files)
+        val = EnvConfig.get(key);
         if (val != null && !val.trim().isEmpty()) {
             return val.trim();
         }

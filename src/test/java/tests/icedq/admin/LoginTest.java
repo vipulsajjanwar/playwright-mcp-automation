@@ -30,14 +30,20 @@ public class LoginTest extends BaseTest {
     )
     @Test(groups = {"smoke", "regression"})
     public void testLoginPageNavigation() {
-        FrameworkLogger.step("Step 1: Initializing login page");
-        AppLoginPage loginPage = new AppLoginPage(page());
+        try {
+            FrameworkLogger.step("Step 1: Initializing login page");
+            AppLoginPage loginPage = new AppLoginPage(page());
 
-        FrameworkLogger.step("Step 2: Submitting user credentials");
-        loginPage.loginWithUserDetails("", "");
+            FrameworkLogger.step("Step 2: Submitting user credentials");
+            loginPage.loginWithUserDetails("", "");
 
-        FrameworkLogger.step("Step 3: Validating home page title");
-        loginPage.validateLoginPageTitle("icedq - home");
+            FrameworkLogger.step("Step 3: Validating home page title");
+            loginPage.validateLoginPageTitle("icedq - home");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            afterTest();
+        }
     }
 
     @CustomTest(

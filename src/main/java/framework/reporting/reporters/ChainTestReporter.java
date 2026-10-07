@@ -2,6 +2,7 @@ package framework.reporting.reporters;
 
 import framework.annotations.TestMetadata;
 import framework.config.ReportingConfig;
+import framework.constants.FrameworkConstants;
 import framework.context.TestContext;
 import framework.listeners.ChainTestListener;
 import framework.reporting.TestReporter;
@@ -23,7 +24,8 @@ public class ChainTestReporter implements TestReporter {
 
     @Override
     public String getReporterName() {
-        return "ChainTest";
+
+        return ChainTestUtil.getReportName(FrameworkConstants.REPORT_NAME);
     }
 
     @Override
@@ -49,9 +51,13 @@ public class ChainTestReporter implements TestReporter {
                     tags.add(metadata.getCategory());
                 }
             }
+            String displayName = context.getTestName();
+            if (context.getBrowser() != null && !context.getBrowser().isBlank()) {
+                displayName = displayName + " [" + context.getBrowser() + "]";
+            }
 
             ChainTestListener.startTest(
-                    context.getTestName(),
+                    displayName,
                     context.getClassName(),
                     metadata != null ? metadata.getDescription() : "",
                     tags.toArray(new String[0])
@@ -71,8 +77,21 @@ public class ChainTestReporter implements TestReporter {
 
     @Override
     public void onStep(TestContext context, String message) {
-        if (!isEnabled()) return;
-        ChainTestListener.info(message);
+        if (!isEnabled() || message == null) return;
+
+        String msg = message.trim();
+
+        if (msg.startsWith("[PASS]")) {
+            ChainTestListener.passStep(msg);
+        } else if (msg.startsWith("[FAIL]") || msg.startsWith("[ERROR]")) {
+            ChainTestListener.fail(msg);
+        } else if (msg.startsWith("[WARN]")) {
+            ChainTestListener.warn(msg);
+        } else if (msg.startsWith("[SKIP]")) {
+            ChainTestListener.skip(msg);
+        } else {
+            ChainTestListener.info(msg);
+        }
     }
 
     @Override

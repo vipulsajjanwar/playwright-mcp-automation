@@ -58,6 +58,8 @@ public class TestListener implements ITestListener, ISuiteListener {
 
         synchronized (TestConstants.class) {
             TestConstants.testCount++;
+            TestConstants.NUMBEROFFAILURES=0;
+            TestConstants.NUMBEROFSKIPS=0;
         }
 
         ReportingManager.getInstance().onTestStart(context);
@@ -86,7 +88,6 @@ public class TestListener implements ITestListener, ISuiteListener {
 
         synchronized (TestConstants.class) {
             TestConstants.failedTC++;
-            TestConstants.NUMBEROFFAILURES++;
         }
 
         // Automatically capture Playwright failure artifacts before browser is closed
@@ -115,7 +116,6 @@ public class TestListener implements ITestListener, ISuiteListener {
 
         synchronized (TestConstants.class) {
             TestConstants.skippedTC++;
-            TestConstants.NUMBEROFSKIPS++;
         }
 
         String skipReason = result.getThrowable() != null

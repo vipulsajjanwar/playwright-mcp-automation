@@ -34,7 +34,9 @@
         <allure.version>2.29.1</allure.version>
         <aspectj.version>1.9.25.1</aspectj.version>
         <chaintest.testng.version>1.0.12</chaintest.testng.version>
+        <dotenv-java.version>3.0.0</dotenv-java.version>
         <env>qa</env>
+        <report>vipul</report>
 
     </properties>
 
@@ -148,6 +150,12 @@
             <version>${chaintest.testng.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>${dotenv-java.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -183,8 +191,9 @@
                         <headless>${headless}</headless>
                         <threads>${threads}</threads>
                         <allure.results.directory>
-                            ${project.build.directory}/allure-results
+                            reports/allure-results
                         </allure.results.directory>
+                        <report.Folder>${report}</report.Folder>
                     </systemPropertyVariables>
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
@@ -200,6 +209,17 @@
                     </dependency>
 
                 </dependencies>
+            </plugin>
+
+            <!-- Allure Maven Plugin for CLI-less Maven builds -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.12.0</version>
+                <configuration>
+                    <reportVersion>${allure.version}</reportVersion>
+                    <resultsDirectory>${project.basedir}/reports/allure-results</resultsDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>

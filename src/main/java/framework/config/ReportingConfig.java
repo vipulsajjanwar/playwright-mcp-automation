@@ -20,6 +20,29 @@ public final class ReportingConfig {
         return ConfigManager.getBoolean("allure.enabled", true);
     }
 
+    public static boolean isAllureHistoryEnabled() {
+        if (ConfigManager.get("allure.history.enabled") != null) {
+            return ConfigManager.getBoolean("allure.history.enabled", true);
+        }
+        return ConfigManager.getBoolean("reporting.allure.history", true);
+    }
+
+    public static String getAllureBasePath() {
+        String path = ConfigManager.get("allure.base.path");
+        if (path != null && !path.isBlank()) {
+            return path.trim();
+        }
+        path = ConfigManager.get("reporting.allure.base.path");
+        return (path != null && !path.isBlank()) ? path.trim() : "reports/allure";
+    }
+
+    public static boolean isAllureAutoGenerateEnabled() {
+        if (ConfigManager.get("allure.auto.generate") != null) {
+            return ConfigManager.getBoolean("allure.auto.generate", true);
+        }
+        return ConfigManager.getBoolean("reporting.allure.auto.generate", true);
+    }
+
     public static boolean isChainTestEnabled() {
         if (ConfigManager.get("reporting.chaintest") != null) {
             return ConfigManager.getBoolean("reporting.chaintest", true);

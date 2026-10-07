@@ -14,10 +14,8 @@ import io.qameta.allure.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Parameters;
+import org.testng.SkipException;
+import org.testng.annotations.*;
 
 import java.lang.reflect.Method;
 
@@ -26,11 +24,11 @@ public abstract class BaseTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Step("Navigate to login page")
-    @Parameters({"ExecutionID"})
+    @Parameters({"ExecutionID", "browser"})
     @BeforeMethod(alwaysRun = true)
-    public void setUp(Method method, String executionID) {
+    public void setUp(Method method, @Optional("") String executionID, @Optional("") String browser) {
         logger.info("================ Starting Test: {} ================", method.getName());
-        BrowserManager.initThreadSession();
+        BrowserManager.initThreadSession(browser);
         TraceUtils.startTracing(BrowserManager.getContext());
         TestConstants.ExecutionID = executionID;
         String baseUrl = ConfigManager.get("baseUrl");
@@ -73,5 +71,18 @@ public abstract class BaseTest {
 
     protected boolean shouldNavigateBaseUrl() {
         return true;
+    }
+
+    public void afterTest(){
+
+        if(TestConstants.NUMBEROFFAILURES>0){
+            logger.info("Test suite has failures. Capturing artifacts...");
+            throw new AssertionError("Test suite has failures. Please check the logs and artifacts for details.");
+        }
+
+        if(TestConstants.NUMBEROFSKIPS>0){
+            logger.info("Test suite has skipped tests. Capturing artifacts...");
+            throw new SkipException("Test suite has skipped tests. Please check the logs and artifacts for details.");
+        }
     }
 }

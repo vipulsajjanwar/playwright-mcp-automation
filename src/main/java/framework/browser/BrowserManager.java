@@ -38,8 +38,8 @@ public class BrowserManager {
         logger.debug("Set BrowserContext & Page for thread: {}", Thread.currentThread().getName());
     }
 
-    public static void initThreadSession() {
-        Browser browser = BrowserFactory.getBrowser();
+    public static void initThreadSession(String browserName) {
+        Browser browser = BrowserFactory.getBrowser(browserName);
         BrowserContext context = BrowserContextManager.createContext(browser);
 
         Page page = context.newPage();

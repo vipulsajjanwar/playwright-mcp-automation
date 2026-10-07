@@ -21,7 +21,7 @@ public final class FrameworkLogger {
     public static void info(String message) {
         TestContext context = TestContextManager.getContext();
         if (context != null) {
-            ReportingManager.getInstance().onStep(context, "[INFO] " + message);
+            ReportingManager.getInstance().onStep(context, message);
         } else {
             logger.info("[INFO] {}", message);
         }

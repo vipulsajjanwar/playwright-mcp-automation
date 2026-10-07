@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Locale;
 
 public class BrowserFactory {
 
@@ -18,17 +19,63 @@ public class BrowserFactory {
 
     private BrowserFactory() {}
 
-    public static Browser getBrowser() {
+    public static Browser getBrowser(String browserName) {
         if (threadBrowser.get() == null || !threadBrowser.get().isConnected()) {
-            String browserName = ConfigManager.get(
-                    "browser",
-                    BrowserConstants.CHROMIUM
-            );
-
-            threadBrowser.set(createBrowserInstance(browserName));
+            String effectiveBrowser = (browserName != null && !browserName.isBlank())
+                    ? normalizeBrowser(browserName)
+                    : getEffectiveBrowser();
+            threadBrowser.set(createBrowserInstance(effectiveBrowser));
         }
         return threadBrowser.get();
     }
+    /**
+     * Backward-compatible single-browser resolution.
+     * If browser is missing, preserve existing fallback behavior.
+     */
+    public static String getEffectiveBrowser() {
+        String browserName = ConfigManager.get("browser", BrowserConstants.CHROMIUM);
+        if (browserName == null || browserName.isBlank()) {
+            return BrowserConstants.CHROMIUM;
+        }
+        return normalizeBrowser(browserName);
+    }
+
+    private static String normalizeBrowser(String browserName) {
+        String value = browserName.trim().toLowerCase(Locale.ROOT);
+        return switch (value) {
+            case BrowserConstants.CHROMIUM,
+                 BrowserConstants.CHROME,
+                 BrowserConstants.FIREFOX,
+                 BrowserConstants.WEBKIT,
+                 BrowserConstants.MSEDGE -> value;
+            default -> throw new BrowserException("Unsupported browser: " + browserName);
+        };
+    }
+
+    /**
+     * New helper for orchestration layer:
+     * - if browser is provided => run only that browser
+     * - if browser is missing => run all supported browsers
+     */
+    public static List<String> resolveRequestedBrowsers() {
+        String browserName = ConfigManager.get("browser");
+        if (browserName == null || browserName.isBlank()) {
+            return getSupportedBrowsers();
+        }
+        return List.of(normalizeBrowser(browserName));
+    }
+
+    public static List<String> getSupportedBrowsers() {
+        return List.of(
+                BrowserConstants.CHROMIUM,
+                BrowserConstants.CHROME,
+                BrowserConstants.FIREFOX,
+                BrowserConstants.WEBKIT,
+                BrowserConstants.MSEDGE
+        );
+    }
+
+
 
     private static Browser createBrowserInstance(String browserName) {
         Playwright playwright = PlaywrightManager.getPlaywright();

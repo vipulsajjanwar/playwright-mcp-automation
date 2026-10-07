@@ -20,14 +20,27 @@ public class AllureTestListener implements ITestListener, ISuiteListener {
         if (!AllureUtils.isEnabled()) {
             return;
         }
+        String suiteName = suite != null ? suite.getName() : "Playwright Automation Suite";
+        framework.reporting.allure.ReportPathManager.ExecutionPaths paths = framework.reporting.allure.ReportPathManager.initializeExecutionPaths(suiteName);
+        framework.reporting.allure.AllureHistoryManager.preserveHistory(paths.suiteName(), paths.resultsDir(), paths.executionDir());
+
         // Once per run: populates the Environment widget and defect categories.
         AllureUtils.writeEnvironment(Map.of(
-                "Base URL", ConfigManager.get("baseUrl"),
-                "Browser", ConfigManager.get("browser"),
-                "Java", System.getProperty("java.version"),
-                "OS", System.getProperty("os.name")
+                "Base URL", ConfigManager.get("baseUrl") != null ? ConfigManager.get("baseUrl") : "http://localhost",
+                "Browser", ConfigManager.get("browser") != null ? ConfigManager.get("browser") : "chromium",
+                "Java", System.getProperty("java.version") != null ? System.getProperty("java.version") : "unknown",
+                "OS", System.getProperty("os.name") != null ? System.getProperty("os.name") : "unknown"
         ));
         AllureUtils.writeDefaultCategories();
+    }
+
+    @Override
+    public void onFinish(ISuite suite) {
+        if (!AllureUtils.isEnabled()) {
+            return;
+        }
+        String suiteName = suite != null ? suite.getName() : "Playwright Automation Suite";
+        framework.reporting.allure.AllureReportManager.onSuiteFinish(suiteName);
     }
 
     @Override

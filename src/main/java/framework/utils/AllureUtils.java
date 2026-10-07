@@ -1,6 +1,7 @@
 package framework.utils;
 
 import framework.config.ConfigManager;
+import framework.constants.FrameworkConstants;
 import io.qameta.allure.Allure;
 import io.qameta.allure.SeverityLevel;
 import io.qameta.allure.model.Status;
@@ -18,6 +19,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.StringEscapeUtils.escapeJson;
+
 /**
  * Thin, static helpers around the Allure Java API.
  *
@@ -27,7 +30,7 @@ import java.util.UUID;
 public final class AllureUtils {
 
     private static final String RESULTS_DIR_PROP = "allure.results.directory";
-    private static final String DEFAULT_RESULTS_DIR = "target/allure-results";
+    private static final String DEFAULT_RESULTS_DIR = "reports/allure-results";
 
     /** JVM property: -Dallure.enabled=false. Env var fallback: ALLURE_ENABLED=false. Default: true. */
     public static final String ENABLED_PROP = "reporting.allure";
@@ -266,7 +269,17 @@ public final class AllureUtils {
     }
 
     public static Path resultsDir() {
-        return Paths.get(System.getProperty(RESULTS_DIR_PROP, DEFAULT_RESULTS_DIR));
+        String configured = System.getProperty(RESULTS_DIR_PROP);
+
+        if (configured == null || configured.isBlank()) {
+            configured = ConfigManager.get(RESULTS_DIR_PROP);
+        }
+
+        if (configured == null || configured.isBlank()) {
+            configured = DEFAULT_RESULTS_DIR;
+        }
+
+        return Paths.get(configured);
     }
 
     // ------------------------------------------------------------------
@@ -360,4 +373,29 @@ public final class AllureUtils {
     private static String nameForLevel(String level) {
         return level.toUpperCase() + " LOG";
     }
+
+    public static void writeExecutor(String name, String type, String url, String buildName, String buildUrl) {
+        String json = """
+        {
+          "name": "%s",
+          "type": "%s",
+          "url": "%s",
+          "buildName": "%s",
+          "buildUrl": "%s"
+        }
+        """.formatted(
+                escapeJson(name),
+                escapeJson(type),
+                escapeJson(url),
+                escapeJson(buildName),
+                escapeJson(buildUrl)
+        );
+
+        safely(() -> {
+            Path dir = resultsDir();
+            Files.createDirectories(dir);
+            Files.writeString(dir.resolve("executor.json"), json, StandardCharsets.UTF_8);
+        });
+    }
+
 }

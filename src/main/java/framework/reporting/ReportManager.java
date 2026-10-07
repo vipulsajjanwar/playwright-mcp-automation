@@ -52,7 +52,7 @@ public class ReportManager {
             extentReports.setSystemInfo("OS", System.getProperty("os.name"));
             extentReports.setSystemInfo("Java Version", System.getProperty("java.version"));
             extentReports.setSystemInfo("Environment", ConfigManager.get("env", "qa"));
-            extentReports.setSystemInfo("Browser", ConfigManager.get("browser", "chromium"));
+          //  extentReports.setSystemInfo("Browser", ConfigManager.get("browser", "chromium"));
             extentReports.setSystemInfo("APP URL", ConfigManager.get("baseUrl", "http://localhost:3000"));
 
             logger.info("Initialized ExtentReports at: {}", reportPath);

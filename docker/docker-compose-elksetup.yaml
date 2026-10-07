@@ -1,0 +1,106 @@
+version: '3.7'
+
+services:
+  elasticsearch1:
+    image: elasticsearch:8.11.0
+    #mem_limit: 2g
+    #mem_reservation: 1g
+    #cpus: "1"
+    container_name: elasticsearch1
+    environment:
+      - node.name=elasticsearch1
+      - cluster.name=es-cluster
+      - cluster.initial_master_nodes=elasticsearch1
+      - node.roles=master,data,ingest
+      - cluster.routing.allocation.enable=all
+      - discovery.seed_hosts=elasticsearch2
+      - bootstrap.memory_lock=true
+      - network.host=0.0.0.0
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch1/elasticsearch1.key
+      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch1/elasticsearch1.crt
+      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/ca/ca.crt
+      - xpack.security.http.ssl.enabled=false
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ES_JAVA_OPTS=-Xms2g -Xmx2g
+      # Disable heavy modules
+      - xpack.ml.enabled=false
+      - xpack.watcher.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearchdata1:/usr/share/elasticsearch/data
+      - ./certs:/usr/share/elasticsearch/config/certs
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elastic
+    restart: on-failure
+
+  elasticsearch2:
+    image: elasticsearch:8.11.0
+    #mem_limit: 2g
+    #mem_reservation: 1g
+    #cpus: "1"
+    container_name: elasticsearch2
+    environment:
+      - node.name=elasticsearch2
+      - cluster.name=es-cluster
+      - node.roles=master,data,ingest
+      - cluster.routing.allocation.enable=all
+      - discovery.seed_hosts=elasticsearch1
+      - bootstrap.memory_lock=true
+      - network.host=0.0.0.0
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch2/elasticsearch2.key
+      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch2/elasticsearch2.crt
+      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/ca/ca.crt
+      - xpack.security.http.ssl.enabled=false
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ES_JAVA_OPTS=-Xms2g -Xmx2g
+      # Disable heavy modules
+      - xpack.ml.enabled=false
+      - xpack.watcher.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearchdata2:/usr/share/elasticsearch/data
+      - ./certs:/usr/share/elasticsearch/config/certs
+    networks:
+      - elastic
+    restart: on-failure
+
+  kibana:
+    image: kibana:8.11.0
+    #mem_limit: 1g
+    #mem_reservation: 512m
+    #cpus: "1"
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - SERVER_NAME=kibana
+      - SERVER_HOST=0.0.0.0
+      - ELASTICSEARCH_HOSTS=http://elasticsearch1:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+      - SERVER_PUBLICBASEURL=${SERVICE_BASEURL}
+    depends_on:
+      - elasticsearch1
+      - elasticsearch2
+    networks:
+      - elastic
+    restart: on-failure
+
+networks:
+  elastic:
+    driver: bridge

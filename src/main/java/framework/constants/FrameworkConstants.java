@@ -17,7 +17,7 @@ public final class FrameworkConstants {
     public static final String DEFAULT_CONFIG_PATH = CONFIG_DIR + "config.properties";
     public static final String CHAINTEST_CONFIG_PATH = "src/test/resources/chaintest.properties";
 
-    public static final String REPORT_DIR = "reports/"+TestConstants.SuiteName;
+    public static final String REPORT_DIR = "reports/"+ConfigManager.get("report.Folder", "")+"/"+TestConstants.SuiteName;
     public static final String REPORT_NAME = TestConstants.SuiteName+"_"+ timestamp +".html";
     public static final String EXTENT_REPORT_PATH = REPORT_DIR+"/"+REPORT_NAME;
     public static final String TRACE_DIR = REPORT_DIR+"/traces";

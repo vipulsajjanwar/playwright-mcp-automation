@@ -1,6 +1,7 @@
 package framework.reporting;
 
 import com.microsoft.playwright.Page;
+import framework.constants.TestConstants;
 import framework.context.TestContext;
 import framework.context.TestContextManager;
 import framework.reporting.artifacts.ScreenshotManager;
@@ -32,11 +33,13 @@ public final class ReportUtils {
     }
 
     public static void logFail(String message, Throwable throwable) {
+        TestConstants.NUMBEROFFAILURES++;
         FrameworkLogger.error(message, throwable);
     }
 
     public static void logFail(String message, String reason, Page page) {
         TestContext context = TestContextManager.getContext();
+        TestConstants.NUMBEROFFAILURES++;
         if (page != null) {
             ScreenshotManager.captureScreenshot(page, "ValidationFailure", context);
         }
@@ -44,6 +47,7 @@ public final class ReportUtils {
     }
 
     public static void logError(Exception e, String message) {
+        TestConstants.NUMBEROFSKIPS++;
         FrameworkLogger.error(message, e);
     }
 

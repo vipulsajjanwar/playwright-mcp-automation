@@ -9,6 +9,8 @@ import org.testng.Reporter;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ChainTestUtil {
 
@@ -212,5 +214,15 @@ public class ChainTestUtil {
             logLevel = LogLevel.INFO;
         }
         ChainTestLogger.log(logLevel, message);
+    }
+
+    public static String getReportName(String suiteName) {
+
+        return suiteName;
+    }
+
+    public static String getReportDirectory(String suiteName) {
+
+        return "reports/ChainTest/" + suiteName;
     }
 }
