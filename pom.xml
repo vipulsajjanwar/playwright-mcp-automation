@@ -156,6 +156,21 @@
             <version>${dotenv-java.version}</version>
         </dependency>
 
+        <!-- the reporter for TestNG -->
+        <dependency>
+            <groupId>dev.reportinglabs</groupId>
+            <artifactId>reporting-labs-testng</artifactId>
+            <version>0.1.28</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- finds your Page, records API calls, trace and screenshot -->
+        <dependency>
+            <groupId>dev.reportinglabs</groupId>
+            <artifactId>reporting-labs-playwright</artifactId>
+            <version>0.1.28</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

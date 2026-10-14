@@ -3,7 +3,7 @@
 <suite name="Cross Browser Suite" verbose="1" parallel="tests" thread-count="4">
     <listeners>
         <listener class-name="framework.listeners.TestListener" />
-
+        <listener class-name="dev.reportinglabs.testng.ReportingLabsListener"/>
     </listeners>
 
     <test name="Chrome Tests">
