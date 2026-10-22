@@ -37,7 +37,10 @@
         <dotenv-java.version>3.0.0</dotenv-java.version>
         <env>qa</env>
         <report>vipul</report>
-
+        <suiteXmlFile>src/test/resources/testng/prompts.xml</suiteXmlFile>
+        <browser>chromium</browser>
+        <headless>true</headless>
+        <threads>1</threads>
     </properties>
 
     <dependencies>

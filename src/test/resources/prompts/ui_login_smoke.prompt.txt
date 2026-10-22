@@ -1,0 +1,11 @@
+# test: UI Login Smoke
+# type: ui
+# mode: soft
+# tags: smoke, ui
+go to data:text/html,<title>Application Login</title><div><header>header logo</header><nav>left nav (Dashboard, Users, Reports)</nav><input placeholder='search box'/><button>profile menu</button><label>Username<input type='text'/></label><label>Password<input type='password'/></label><button>Login</button><a href='#users'>Users</a><table><thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead><tbody><tr><td>Alice</td><td>alice@example.com</td><td>Admin</td></tr></tbody></table></div>
+login with username ${USER_ADMIN} and password ${PASS_ADMIN}
+verify all UI components: header logo, search box, profile menu
+click Users
+verify table has columns Name, Email, Role
+create a user using generated test data
+verify the new user appears in the table

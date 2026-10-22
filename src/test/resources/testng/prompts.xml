@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="PromptDrivenAutomationSuite" parallel="instances" thread-count="1" verbose="1">
+    <listeners>
+        <listener class-name="framework.listeners.TestListener" />
+        <listener class-name="framework.listeners.SuiteListener" />
+        <listener class-name="framework.promptdriven.PromptSuiteListener" />
+    </listeners>
+
+    <test name="PromptDrivenTests" preserve-order="true">
+        <classes>
+            <class name="framework.promptdriven.PromptTestFactory" />
+        </classes>
+    </test>
+</suite>

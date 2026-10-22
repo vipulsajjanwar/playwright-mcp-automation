@@ -1,0 +1,11 @@
+# test: Mixed API Create and UI Verify
+# type: mixed
+# mode: soft
+# tags: integration, mixed
+base url https://jsonplaceholder.typicode.com
+POST /users with body {"username":"${USER_ADMIN}","role":"ADMIN"}
+verify status 201
+store id as createdUserId
+go to https://app.example.com
+login with username ${USER_ADMIN} and password ${PASS_ADMIN}
+verify all UI components: header logo, left nav

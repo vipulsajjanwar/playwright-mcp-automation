@@ -51,3 +51,7 @@ traces/
 *.key
 credentials.json
 secrets.json
+secrets.properties
+src/test/resources/config/secrets.properties
+target/prompt-runs/
+target/ai-plans/

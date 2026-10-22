@@ -1,0 +1,11 @@
+# test: Bank Login Smoke
+# type: ui
+# mode: soft
+# tags: smoke, bank, ui
+go to https://qaplayground.com/bank/login
+fill Username with standard_user
+fill Password with bank_sauce
+click Sign In
+verify text Welcome back, Alex
+verify text Total Net Worth
+store text of Total Net Worth as totalNetWorth

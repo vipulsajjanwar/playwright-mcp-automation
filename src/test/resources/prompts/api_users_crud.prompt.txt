@@ -1,0 +1,12 @@
+# test: API Users CRUD
+# type: api
+# mode: soft
+# tags: smoke, api
+base url https://jsonplaceholder.typicode.com
+POST /users with body {"name":"Test User","username":"${USER_ADMIN}","email":"test@example.com"}
+verify status 201
+GET /users/1
+verify status 200 and response has field email
+store email as userEmail
+GET /users
+verify status 200 and every item has id, email
