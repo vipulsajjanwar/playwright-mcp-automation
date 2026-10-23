@@ -28,8 +28,9 @@ public class SecureBankLoginTest extends BaseTest {
     @Test(groups = {"smoke", "regression"})
     public void verifyDashboardLoad() {
         try {
-            new SecureBankLoginPage(page()).configureLoginFunctionality(
-                    "standard_user", "bank_sauce");
+
+            new SecureBankLoginPage(page()).loginWithRole("admin");
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {

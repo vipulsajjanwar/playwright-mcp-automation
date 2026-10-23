@@ -5,6 +5,9 @@ import com.securebank.pages.DashboardPage;
 import com.securebank.pages.SecureBankLoginPage;
 import framework.annotations.CustomTest;
 import framework.base.BaseTest;
+import framework.constants.BrowserConstants;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 @CustomTest(
@@ -14,6 +17,11 @@ import org.testng.annotations.Test;
         requirementId = "REQ-USER-102"
 )
 public class SecureBankDashboardTest extends BaseTest {
+
+    @BeforeClass(alwaysRun = true)
+    public void loginOnceForClass() {
+        if(BrowserConstants.LOGIN_ONCE) new SecureBankLoginPage(page()).loginWithRole("admin");
+    }
 
     @CustomTest(
             testId = "TC-DASH-002",
@@ -30,8 +38,7 @@ public class SecureBankDashboardTest extends BaseTest {
     @Test(groups = {"smoke", "regression"})
     public void verifyDashboardTotalBalanceDisplay() {
         try {
-            new SecureBankLoginPage(page()).configureLoginFunctionality(
-                    "standard_user", "bank_sauce");
+            if(!BrowserConstants.LOGIN_ONCE) new SecureBankLoginPage(page()).loginWithRole("admin");
 
             double totalAccountBalance =  new AccountsPage(page()).calculateTotalBalance();
 
@@ -59,8 +66,7 @@ public class SecureBankDashboardTest extends BaseTest {
     @Test(groups = {"smoke", "regression"})
     public void verifyRecentTransactionWidget() {
         try {
-            new SecureBankLoginPage(page()).configureLoginFunctionality(
-                    "standard_user", "bank_sauce");
+            if(!BrowserConstants.LOGIN_ONCE) new SecureBankLoginPage(page()).loginWithRole("admin");
 
             new DashboardPage(page()).validateRecentTransactionsWidget();
 
@@ -86,8 +92,7 @@ public class SecureBankDashboardTest extends BaseTest {
     @Test(groups = {"smoke", "regression"})
     public void verifyQuickTransferLink() {
         try {
-            new SecureBankLoginPage(page()).configureLoginFunctionality(
-                    "standard_user", "bank_sauce");
+            if(!BrowserConstants.LOGIN_ONCE) new SecureBankLoginPage(page()).loginWithRole("admin");
 
             new DashboardPage(page()).validateLinkOnDashboard("Transfer Money", "/bank/transfer");
 
@@ -113,8 +118,7 @@ public class SecureBankDashboardTest extends BaseTest {
     @Test(groups = {"smoke", "regression"})
     public void verifyQuickPayBill() {
         try {
-            new SecureBankLoginPage(page()).configureLoginFunctionality(
-                    "standard_user", "bank_sauce");
+            if(!BrowserConstants.LOGIN_ONCE) new SecureBankLoginPage(page()).loginWithRole("admin");
 
             new DashboardPage(page()).validateLinkOnDashboard("Pay a Bill", "/bank/bill-pay");
 
@@ -140,8 +144,7 @@ public class SecureBankDashboardTest extends BaseTest {
     @Test(groups = {"smoke", "regression"})
     public void verifyThemeToggle() {
         try {
-            new SecureBankLoginPage(page()).configureLoginFunctionality(
-                    "standard_user", "bank_sauce");
+            if(!BrowserConstants.LOGIN_ONCE) new SecureBankLoginPage(page()).loginWithRole("admin");
 
             new DashboardPage(page()).validateThemeToggle("dark");
 

@@ -23,6 +23,12 @@ public class SecureBankLoginPage extends BasePage {
 
     public boolean configureLoginFunctionality(String username, String password) {
         try {
+
+            if(!usernameField.isVisible() && !page.url().contains("/login")){
+                log.info("User is already logged in. No need to login again.");
+                return true;
+            }
+
             ReportUtils.logInfo("Entering username: "+ username);
             usernameField.fill(username);
 
@@ -38,6 +44,31 @@ public class SecureBankLoginPage extends BasePage {
             log.error("Error during login functionality: {}", e.getMessage());
             return false; // Return false if there was an error
         }
+    }
+
+    public boolean loginWithRole(String role){
+        String username = "";
+        String password = "";
+
+        switch (role.toLowerCase()) {
+            case "admin":
+                username = "standard_user";
+                password = "bank_sauce";
+                break;
+            case "user":
+                username = "standard_user";
+                password = "bank_sauce";
+                break;
+            case "guest":
+                username = "guest_user";
+                password = "guest_password";
+                break;
+            default:
+                log.error("Invalid role specified: {}", role);
+                return false; // Return false for invalid role
+        }
+
+        return configureLoginFunctionality(username, password);
     }
 
 

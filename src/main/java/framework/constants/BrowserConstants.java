@@ -14,4 +14,6 @@ public final class BrowserConstants {
     public static final int DEFAULT_VIEWPORT_HEIGHT = 1080;
     public static final String DEFAULT_LOCALE = "en-US";
     public static final String DEFAULT_TIMEZONE = "America/New_York";
+
+    public static final boolean LOGIN_ONCE = false;
 }

@@ -118,6 +118,8 @@ public class DashboardPage extends BasePage {
         try {
             Locator recentTransactionsWidget = getByXpath(recentTxnTableXpath+"//tr//td[@data-testid='recent-txn-description']");
 
+            waitForVisible(recentTransactionsWidget.nth(0), 5000);
+
             int txnCount = recentTransactionsWidget.count();
 
             ReportUtils.logInfo("Number of recent transactions displayed: " + txnCount);
