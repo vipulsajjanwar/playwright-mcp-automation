@@ -45,6 +45,22 @@ public final class FrameworkLogger {
         }
     }
 
+    /**
+     * Logs an HTML table as a step in the test report.
+     *
+     * @param title     descriptive title for the table
+     * @param htmlTable the pre-built HTML table markup
+     */
+    public static void table(String title, String htmlTable) {
+        TestContext context = TestContextManager.getContext();
+        String payload = "[TABLE] " + title + "\n" + htmlTable;
+        if (context != null) {
+            ReportingManager.getInstance().onStep(context, payload);
+        } else {
+            logger.info("[TABLE] {}", title);
+        }
+    }
+
     public static void error(String message, Throwable throwable) {
         TestContext context = TestContextManager.getContext();
         if (context != null) {

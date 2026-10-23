@@ -36,10 +36,10 @@
         <chaintest.testng.version>1.0.12</chaintest.testng.version>
         <dotenv-java.version>3.0.0</dotenv-java.version>
         <env>qa</env>
-        <report>vipul</report>
+        <report></report>
         <suiteXmlFile>src/test/resources/testng/prompts.xml</suiteXmlFile>
-        <browser>chromium</browser>
-        <headless>true</headless>
+        <browser></browser>
+        <headless>false</headless>
         <threads>1</threads>
     </properties>
 

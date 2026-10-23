@@ -50,13 +50,13 @@ public class PromptTest extends BaseTest implements ITest {
 
     @Override
     @BeforeMethod(alwaysRun = true)
-    @Parameters({"ExecutionID", "browser"})
-    public void setUp(Method method, @Optional("") String executionID, @Optional("") String browser) {
+    @Parameters({"browser"})
+    public void setUp(Method method, @Optional("") String browser) {
         if ("api".equalsIgnoreCase(promptFile.getType())) {
             logger.info("Skipping browser initialization for pure API prompt test: {}", promptFile.getName());
             return;
         }
-        super.setUp(method, executionID, browser);
+        super.setUp(method, browser);
     }
 
     @Test

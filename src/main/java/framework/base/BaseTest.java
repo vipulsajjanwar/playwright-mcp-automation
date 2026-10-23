@@ -24,13 +24,15 @@ public abstract class BaseTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Step("Navigate to login page")
-    @Parameters({"ExecutionID", "browser"})
+    @Parameters({"Browser"})
     @BeforeMethod(alwaysRun = true)
-    public void setUp(Method method, @Optional("") String executionID, @Optional("") String browser) {
+    public void setUp(Method method, @Optional("") String browser) {
         logger.info("================ Starting Test: {} ================", method.getName());
+
         BrowserManager.initThreadSession(browser);
         TraceUtils.startTracing(BrowserManager.getContext());
-        TestConstants.ExecutionID = executionID;
+        TestConstants.ExecutionID = "";
+        TestConstants.BROWSER_NAME.set(browser.isEmpty() ? ConfigManager.get("browser") : browser);
         String baseUrl = ConfigManager.get("baseUrl");
         if (baseUrl != null && !baseUrl.isEmpty() && shouldNavigateBaseUrl()) {
             PageUtils.navigate(page(), baseUrl);

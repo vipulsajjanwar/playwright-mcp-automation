@@ -54,7 +54,7 @@ public final class TestContextFactory {
         }
 
         if (browser == null || browser.isBlank()) {
-            browser = ConfigManager.get("browser", "chromium");
+            browser = TestConstants.BROWSER_NAME.get();
         }
 
         String environment = metadata.getEnvironment() != null && !metadata.getEnvironment().isBlank()

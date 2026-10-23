@@ -171,7 +171,19 @@ public class AllureTestReporter implements TestReporter {
             return;
         }
 
-        AllureUtils.logStep(message.trim());
+        String msg = message.trim();
+
+        if (msg.startsWith("[TABLE]")) {
+            // Extract title and HTML table content
+            int newlineIdx = msg.indexOf('\n');
+            String title = (newlineIdx > 0)
+                    ? msg.substring("[TABLE] ".length(), newlineIdx).trim()
+                    : "Table";
+            String htmlContent = (newlineIdx > 0) ? msg.substring(newlineIdx + 1) : "";
+            AllureUtils.attachHtml(title, htmlContent);
+        } else {
+            AllureUtils.logStep(msg);
+        }
     }
 
     @Override

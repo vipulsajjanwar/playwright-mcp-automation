@@ -31,5 +31,7 @@ public final class TestConstants {
     public static String BaseURL = "";
 
     public static String ExecutionID = "";
+    public static final ThreadLocal<String> Execution_ID = ThreadLocal.withInitial(() -> "");
+    public static final ThreadLocal<String> BROWSER_NAME = ThreadLocal.withInitial(() -> "");
 
 }
