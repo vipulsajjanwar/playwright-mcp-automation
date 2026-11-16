@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: AI-powered test failure analysis engine that interprets stack traces and screenshots to generate actionable root-cause suggestions.
+ * Created: 2026-08-15
+ */
 package framework.ai;
 
 import framework.utils.JsonUtils;

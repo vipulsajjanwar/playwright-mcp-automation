@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Ships structured log events to Elasticsearch via Logstash HTTP endpoint for real-time test observability.
+ * Created: 2026-10-01
+ */
 package framework.reporting.elk;
 
 import framework.config.ConfigManager;

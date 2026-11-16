@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestReporter implementation generating interactive ExtentReports HTML reports with screenshots and step logs.
+ * Created: 2026-10-01
+ */
 package framework.reporting.reporters;
 
 import com.aventstack.extentreports.ExtentReports;
@@ -102,7 +109,12 @@ public class ExtentTestReporter implements TestReporter {
 
         String msg = message.trim();
 
-        if (msg.startsWith("[PASS]")) {
+        if (msg.startsWith("[TABLE]")) {
+            // Extract HTML table content after the title line
+            int newlineIdx = msg.indexOf('\n');
+            String htmlContent = (newlineIdx > 0) ? msg.substring(newlineIdx + 1) : msg;
+            test.log(Status.INFO, htmlContent);
+        } else if (msg.startsWith("[PASS]")) {
             test.log(Status.PASS, MarkupHelper.createLabel(msg, ExtentColor.GREEN));
         } else if (msg.startsWith("[FAIL]")) {
             test.log(Status.FAIL, MarkupHelper.createLabel(msg, ExtentColor.RED));

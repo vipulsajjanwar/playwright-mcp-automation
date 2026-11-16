@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Captures and stores Playwright page screenshots on test failure or on-demand, with Allure attachment support.
+ * Created: 2026-10-01
+ */
 package framework.reporting.artifacts;
 
 import com.microsoft.playwright.Page;

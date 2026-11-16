@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Configuration holder for AI integration settings including API keys, model selection, temperature, and retry behaviour.
+ * Created: 2026-08-15
+ */
 package framework.ai;
 
 import framework.config.ConfigManager;

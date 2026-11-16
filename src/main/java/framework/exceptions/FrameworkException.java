@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Root runtime exception for the automation framework, providing a common base for all framework-specific errors.
+ * Created: 2026-08-15
+ */
 package framework.exceptions;
 
 import com.microsoft.playwright.PlaywrightException;

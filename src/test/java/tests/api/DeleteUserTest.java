@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: API test suite verifying user deletion endpoints: successful deletion, idempotency, and 404 response handling.
+ * Created: 2026-08-15
+ */
 package tests.api;
 
 import framework.api.ApiClient;

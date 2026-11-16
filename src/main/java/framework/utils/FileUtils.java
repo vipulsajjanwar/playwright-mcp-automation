@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: File system utility methods: directory creation, file copying, content reading, and cleanup helpers.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import framework.exceptions.FrameworkException;

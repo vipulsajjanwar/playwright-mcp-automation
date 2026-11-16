@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Unified logging abstraction consolidating console output, step logging, and reporter attachment without duplicate entries.
+ * Created: 2026-10-01
+ */
 package framework.reporting;
 
 import com.microsoft.playwright.Page;
@@ -42,6 +49,22 @@ public final class FrameworkLogger {
             ReportingManager.getInstance().onStep(context, "[WARN] " + message);
         } else {
             logger.warn("[WARN] {}", message);
+        }
+    }
+
+    /**
+     * Logs an HTML table as a step in the test report.
+     *
+     * @param title     descriptive title for the table
+     * @param htmlTable the pre-built HTML table markup
+     */
+    public static void table(String title, String htmlTable) {
+        TestContext context = TestContextManager.getContext();
+        String payload = "[TABLE] " + title + "\n" + htmlTable;
+        if (context != null) {
+            ReportingManager.getInstance().onStep(context, payload);
+        } else {
+            logger.info("[TABLE] {}", title);
         }
     }
 

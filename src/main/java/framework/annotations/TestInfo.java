@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Annotation interface for attaching descriptive test metadata such as ID, name, severity, and feature tags to test methods.
+ * Created: 2026-10-01
+ */
 package framework.annotations;
 
 public @interface TestInfo {

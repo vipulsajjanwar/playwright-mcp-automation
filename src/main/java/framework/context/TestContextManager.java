@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Thread-local registry for TestContext instances, ensuring each parallel test thread accesses its own isolated context.
+ * Created: 2026-10-01
+ */
 package framework.context;
 
 /**

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Fluent builder for constructing REST API requests with headers, query parameters, path variables, and request bodies.
+ * Created: 2026-08-15
+ */
 package framework.api;
 
 import io.restassured.RestAssured;

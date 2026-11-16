@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Factory class responsible for instantiating and caching the appropriate LlmClient based on configuration.
+ * Created: 2026-10-22
+ */
 package framework.ai.llm;
 
 import framework.ai.AiConfig;

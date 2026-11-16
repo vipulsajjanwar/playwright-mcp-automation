@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Generic login Page Object providing username/password input, form submission, and post-login state assertions.
+ * Created: 2026-08-15
+ */
 package framework.pages;
 
 import com.microsoft.playwright.Locator;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Central dispatcher routing individual plan steps to the appropriate UI or API action executor.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.exec;
 
 import com.fasterxml.jackson.databind.JsonNode;

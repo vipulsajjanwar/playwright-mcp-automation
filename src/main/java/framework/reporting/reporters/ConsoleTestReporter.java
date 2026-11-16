@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestReporter implementation writing colour-coded test progress and results to standard console output.
+ * Created: 2026-10-01
+ */
 package framework.reporting.reporters;
 
 import framework.annotations.TestMetadata;
@@ -53,7 +60,12 @@ public class ConsoleTestReporter implements TestReporter {
         long threadId = context != null ? context.getThreadId() : Thread.currentThread().getId();
         String msg = message != null ? message.trim() : "";
 
-        if (msg.startsWith("[PASS]")) {
+        if (msg.startsWith("[TABLE]")) {
+            // Tables don't render in console — log just the title
+            int newlineIdx = msg.indexOf('\n');
+            String title = (newlineIdx > 0) ? msg.substring(0, newlineIdx) : msg;
+            logger.info("[STEP] [Thread: {}] {}", threadId, title);
+        } else if (msg.startsWith("[PASS]")) {
             logger.info("[PASS] [Thread: {}] {}", threadId, msg);
         } else if (msg.startsWith("[FAIL]") || msg.startsWith("[ERROR]")) {
             logger.error("[STEP] [Thread: {}] {}", threadId, msg);

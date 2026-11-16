@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: LLM client implementation compatible with OpenAI-spec APIs (OpenAI, Ollama, Azure OpenAI, local models).
+ * Created: 2026-10-22
+ */
 package framework.ai.llm;
 
 import com.fasterxml.jackson.databind.JsonNode;

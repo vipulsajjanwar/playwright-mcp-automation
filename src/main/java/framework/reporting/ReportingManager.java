@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Singleton orchestrator managing all registered TestReporter implementations and dispatching lifecycle events.
+ * Created: 2026-10-01
+ */
 package framework.reporting;
 
 import framework.context.TestContext;

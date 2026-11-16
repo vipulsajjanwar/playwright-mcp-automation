@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Rich metadata annotation providing test classification fields including owner, priority, component, Jira ID, and requirement mappings.
+ * Created: 2026-10-01
+ */
 package framework.annotations;
 
 import java.util.ArrayList;

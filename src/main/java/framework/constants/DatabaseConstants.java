@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Constants for database connectivity: driver class names, connection timeout defaults, and SQL query templates.
+ * Created: 2026-08-15
+ */
 package framework.constants;
 
 public final class DatabaseConstants {

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Thread-safe cache storing compiled TestPlan objects to avoid redundant parsing during parallel test execution.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.plan;
 
 import framework.ai.AiConfig;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Parser that converts YAML/Markdown prompt test files into structured PromptFile and TestPlan objects.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven;
 
 import framework.ai.AiConfig;

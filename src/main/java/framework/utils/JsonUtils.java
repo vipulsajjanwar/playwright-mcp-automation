@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: JSON serialisation/deserialisation utilities wrapping Jackson ObjectMapper with error handling and type mapping.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

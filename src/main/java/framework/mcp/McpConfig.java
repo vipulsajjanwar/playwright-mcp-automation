@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Configuration class for MCP server connection details: transport type, host, port, and authentication tokens.
+ * Created: 2026-08-15
+ */
 package framework.mcp;
 
 import framework.config.ConfigManager;

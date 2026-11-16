@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Assertion utility for HTTP responses, validating status codes, JSON fields, schema compliance, and response time SLAs.
+ * Created: 2026-08-15
+ */
 package framework.api;
 
 import framework.exceptions.ApiException;

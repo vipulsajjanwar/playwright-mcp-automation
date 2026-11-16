@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Per-test execution context holding the active Page, BrowserContext, test metadata, and reporter references.
+ * Created: 2026-10-01
+ */
 package framework.context;
 
 import framework.annotations.TestMetadata;

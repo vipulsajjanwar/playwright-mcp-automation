@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Helper utilities for common API testing tasks: JSON parsing, response extraction, request logging, and payload construction.
+ * Created: 2026-08-15
+ */
 package framework.api;
 
 import io.restassured.response.Response;

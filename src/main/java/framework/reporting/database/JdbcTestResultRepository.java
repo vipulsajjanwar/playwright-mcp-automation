@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: JDBC-backed implementation of TestResultRepository for persisting test results to a relational database.
+ * Created: 2026-10-01
+ */
 package framework.reporting.database;
 
 import framework.database.DatabaseManager;

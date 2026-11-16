@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Thread-safe rate limiter for LLM API calls, preventing quota exhaustion and enforcing configurable request throttling.
+ * Created: 2026-10-22
+ */
 package framework.ai.llm;
 
 import framework.ai.AiConfig;

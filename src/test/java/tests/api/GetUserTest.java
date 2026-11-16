@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: API test suite covering user retrieval endpoints: single user, list pagination, and not-found scenarios.
+ * Created: 2026-08-15
+ */
 package tests.api;
 
 import framework.api.ApiClient;

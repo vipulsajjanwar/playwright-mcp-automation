@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestReporter implementation delegating test events to the Allure framework for rich HTML report generation.
+ * Created: 2026-10-01
+ */
 package framework.reporting.reporters;
 
 import framework.annotations.TestMetadata;
@@ -171,7 +178,19 @@ public class AllureTestReporter implements TestReporter {
             return;
         }
 
-        AllureUtils.logStep(message.trim());
+        String msg = message.trim();
+
+        if (msg.startsWith("[TABLE]")) {
+            // Extract title and HTML table content
+            int newlineIdx = msg.indexOf('\n');
+            String title = (newlineIdx > 0)
+                    ? msg.substring("[TABLE] ".length(), newlineIdx).trim()
+                    : "Table";
+            String htmlContent = (newlineIdx > 0) ? msg.substring(newlineIdx + 1) : "";
+            AllureUtils.attachHtml(title, htmlContent);
+        } else {
+            AllureUtils.logStep(msg);
+        }
     }
 
     @Override

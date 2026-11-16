@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestReporter implementation forwarding test events and results to the ELK Stack logging pipeline.
+ * Created: 2026-10-01
+ */
 package framework.reporting.reporters;
 
 import framework.config.ReportingConfig;

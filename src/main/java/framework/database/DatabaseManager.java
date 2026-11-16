@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Manages JDBC connections and connection pools for database validation and test data setup/teardown.
+ * Created: 2026-08-15
+ */
 package framework.database;
 
 import com.zaxxer.hikari.HikariConfig;

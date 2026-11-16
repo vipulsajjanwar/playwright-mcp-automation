@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Programmatic TestNG test runner enabling dynamic suite construction and execution from code or config.
+ * Created: 2026-08-15
+ */
 package framework.execution;
 
 import org.slf4j.Logger;

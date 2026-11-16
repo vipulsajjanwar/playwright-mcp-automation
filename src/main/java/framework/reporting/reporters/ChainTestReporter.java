@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestReporter implementation streaming live test results to the ChainTest SaaS reporting dashboard.
+ * Created: 2026-10-01
+ */
 package framework.reporting.reporters;
 
 import framework.annotations.TestMetadata;
@@ -81,7 +88,14 @@ public class ChainTestReporter implements TestReporter {
 
         String msg = message.trim();
 
-        if (msg.startsWith("[PASS]")) {
+        if (msg.startsWith("[TABLE]")) {
+            int newlineIdx = msg.indexOf('\n');
+            String title = (newlineIdx > 0)
+                    ? msg.substring("[TABLE] ".length(), newlineIdx).trim()
+                    : "Table";
+            String htmlContent = (newlineIdx > 0) ? msg.substring(newlineIdx + 1) : "";
+            ChainTestListener.attachHtml(title, htmlContent);
+        } else if (msg.startsWith("[PASS]")) {
             ChainTestListener.passStep(msg);
         } else if (msg.startsWith("[FAIL]") || msg.startsWith("[ERROR]")) {
             ChainTestListener.fail(msg);

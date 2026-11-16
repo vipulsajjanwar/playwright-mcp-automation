@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Database entity model representing a single test execution result row stored in the reporting schema.
+ * Created: 2026-10-01
+ */
 package framework.reporting.database;
 
 import framework.context.TestContext;

@@ -1,9 +1,17 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Playwright page-level utilities: URL assertion, title verification, cookie management, and scroll helpers.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import framework.constants.FrameworkConstants;
 import framework.exceptions.FrameworkException;
+import framework.reporting.ReportUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +24,7 @@ public class PageUtils {
     public static void navigate(Page page, String url) {
         try {
             logger.info("Navigating to URL: {}", url);
+            ReportUtils.logInfo("Navigating to URL: " + url);
             page.navigate(url);
         } catch (Exception e) {
             throw new FrameworkException("Failed to navigate to: " + url, e);

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Database integration test validating that user CRUD API operations correctly persist and modify database state.
+ * Created: 2026-08-15
+ */
 package tests.database;
 
 import framework.database.DatabaseValidator;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Structured test execution event logger writing detailed step-level logs for diagnostics and audit trails.
+ * Created: 2026-08-15
+ */
 package framework.reporting;
 
 import framework.constants.TestConstants;

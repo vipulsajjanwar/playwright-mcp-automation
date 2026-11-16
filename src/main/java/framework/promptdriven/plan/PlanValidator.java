@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Validates compiled TestPlan objects for required fields, action type compatibility, and logical consistency.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.plan;
 
 import framework.ai.AiConfig;

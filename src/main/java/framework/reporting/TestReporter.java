@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Reporter interface contract defining lifecycle callbacks implemented by all reporting integrations.
+ * Created: 2026-10-01
+ */
 package framework.reporting;
 
 import framework.context.TestContext;

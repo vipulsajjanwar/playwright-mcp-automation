@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Manages Allure history trend data: copying previous results, pruning old runs, and linking history for trend charts.
+ * Created: 2026-10-07
+ */
 package framework.reporting.allure;
 
 import framework.config.ReportingConfig;

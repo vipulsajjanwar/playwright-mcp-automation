@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Utility for reading Java .properties files from classpath or file system with caching and type-safe accessors.
+ * Created: 2026-08-15
+ */
 package framework.config;
 
 import framework.exceptions.ConfigurationException;

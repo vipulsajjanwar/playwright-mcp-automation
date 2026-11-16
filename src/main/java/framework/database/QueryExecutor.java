@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: High-level query executor wrapping JDBC for SELECT, INSERT, UPDATE, and DELETE operations with retry and logging.
+ * Created: 2026-08-15
+ */
 package framework.database;
 
 import framework.exceptions.DatabaseException;

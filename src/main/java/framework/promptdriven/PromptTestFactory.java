@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Factory that dynamically constructs TestNG ITestNGMethod instances from discovered prompt test definitions.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven;
 
 import org.slf4j.Logger;

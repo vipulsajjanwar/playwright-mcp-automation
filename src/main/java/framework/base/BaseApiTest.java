@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Abstract base class for API tests, handling RestAssured configuration, auth token lifecycle, and shared request specifications.
+ * Created: 2026-08-15
+ */
 package framework.base;
 
 import framework.config.ConfigManager;

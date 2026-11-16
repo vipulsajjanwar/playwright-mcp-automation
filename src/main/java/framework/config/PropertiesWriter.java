@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Utility for writing or updating Java .properties files at runtime for dynamic configuration persistence.
+ * Created: 2026-08-15
+ */
 package framework.config;
 
 import framework.exceptions.ConfigurationException;

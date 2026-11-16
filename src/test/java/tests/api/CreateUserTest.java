@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: API test suite validating user creation endpoints: request construction, response assertions, and schema verification.
+ * Created: 2026-08-15
+ */
 package tests.api;
 
 import framework.api.ApiClient;

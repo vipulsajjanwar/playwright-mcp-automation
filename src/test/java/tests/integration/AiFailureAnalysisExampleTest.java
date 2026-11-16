@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Integration test demonstrating AI-powered failure analysis on injected test failures to validate LLM suggestions.
+ * Created: 2026-08-15
+ */
 package tests.integration;
 
 import framework.ai.AiFailureAnalyzer;

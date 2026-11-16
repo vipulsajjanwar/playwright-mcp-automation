@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Email notification service sending HTML test execution summaries on suite completion or failure thresholds.
+ * Created: 2026-09-28
+ */
 package framework.reporting;
 
 import framework.config.ConfigManager;

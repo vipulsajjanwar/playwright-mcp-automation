@@ -1,8 +1,17 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Thread-local browser lifecycle manager ensuring each test thread has a dedicated, clean Browser instance.
+ * Created: 2026-08-15
+ */
 package framework.browser;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
+import framework.config.ConfigManager;
+import framework.constants.BrowserConstants;
 import framework.exceptions.BrowserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +48,11 @@ public class BrowserManager {
     }
 
     public static void initThreadSession(String browserName) {
+
+        if (BrowserConstants.LOGIN_ONCE && threadContext.get() != null && threadPage.get() != null) {
+            logger.info("Reusing existing browser session for thread: {}", Thread.currentThread().getName());
+            return;
+        }
         Browser browser = BrowserFactory.getBrowser(browserName);
         BrowserContext context = BrowserContextManager.createContext(browser);
 
@@ -47,6 +61,12 @@ public class BrowserManager {
     }
 
     public static void closeThreadSession() {
+
+        if (BrowserConstants.LOGIN_ONCE) {
+            logger.info("Skipping closeThreadSession because reuseSession=true");
+            return;
+        }
+
         try {
             Page page = threadPage.get();
             if (page != null && !page.isClosed()) {

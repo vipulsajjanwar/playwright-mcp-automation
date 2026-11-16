@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Resolves and manages file system paths for Allure results, history, and generated report output directories.
+ * Created: 2026-10-07
+ */
 package framework.reporting.allure;
 
 import framework.config.ReportingConfig;

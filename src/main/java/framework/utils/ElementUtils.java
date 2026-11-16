@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Playwright element interaction helpers: safe click, hover, scroll-into-view, and visibility wait wrappers.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import com.microsoft.playwright.Locator;

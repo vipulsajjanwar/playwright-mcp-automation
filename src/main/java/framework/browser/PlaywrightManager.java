@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Central Playwright instance manager handling initialisation, configuration, and graceful shutdown of the Playwright engine.
+ * Created: 2026-08-15
+ */
 package framework.browser;
 
 import com.microsoft.playwright.Playwright;

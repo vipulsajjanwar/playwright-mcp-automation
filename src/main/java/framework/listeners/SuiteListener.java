@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestNG ISuiteListener implementation handling suite-level setup, teardown, and cross-suite reporting aggregation.
+ * Created: 2026-08-15
+ */
 package framework.listeners;
 
 import framework.constants.TestConstants;

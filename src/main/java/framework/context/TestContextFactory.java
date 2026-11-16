@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Factory for creating and initialising TestContext instances with the correct browser, page, and metadata for each test.
+ * Created: 2026-10-01
+ */
 package framework.context;
 
 import framework.annotations.TestMetadata;
@@ -54,7 +61,7 @@ public final class TestContextFactory {
         }
 
         if (browser == null || browser.isBlank()) {
-            browser = ConfigManager.get("browser", "chromium");
+            browser = TestConstants.BROWSER_NAME.get();
         }
 
         String environment = metadata.getEnvironment() != null && !metadata.getEnvironment().isBlank()

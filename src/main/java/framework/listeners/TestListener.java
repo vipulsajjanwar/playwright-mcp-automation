@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Primary TestNG ITestListener dispatching test lifecycle events to all registered reporter implementations.
+ * Created: 2026-08-15
+ */
 package framework.listeners;
 
 import com.microsoft.playwright.Page;

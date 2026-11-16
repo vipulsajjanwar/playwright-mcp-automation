@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Singleton configuration manager providing unified access to all framework property sources with environment override support.
+ * Created: 2026-08-15
+ */
 package framework.config;
 
 import framework.constants.FrameworkConstants;

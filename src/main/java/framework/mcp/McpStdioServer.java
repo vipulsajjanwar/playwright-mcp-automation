@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: STDIO transport implementation of an MCP server for local agent integration via standard input/output streams.
+ * Created: 2026-10-22
+ */
 package framework.mcp;
 
 import org.slf4j.Logger;

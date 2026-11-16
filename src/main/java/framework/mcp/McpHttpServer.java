@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: HTTP transport implementation of an MCP server, exposing framework tools over a REST-like SSE endpoint.
+ * Created: 2026-10-22
+ */
 package framework.mcp;
 
 import com.sun.net.httpserver.HttpExchange;

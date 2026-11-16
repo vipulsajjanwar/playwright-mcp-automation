@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Composite meta-annotation aggregating TestNG @Test configuration and custom framework metadata for a unified test declaration.
+ * Created: 2026-10-01
+ */
 package framework.annotations;
 
 import java.lang.annotation.Documented;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Abstract Playwright Page Object base providing core interaction primitives: click, fill, navigate, wait, and screenshot capture.
+ * Created: 2026-08-15
+ */
 package framework.base;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;

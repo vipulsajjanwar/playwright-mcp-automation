@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Service that discovers and loads prompt test definition files from the configured resource directories.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven;
 
 import framework.ai.AiConfig;

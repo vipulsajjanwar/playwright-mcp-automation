@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Apache POI-based Excel reader for extracting test data from .xlsx workbooks into structured collections.
+ * Created: 2026-08-15
+ */
 package framework.excel;
 
 import framework.constants.FileConstants;

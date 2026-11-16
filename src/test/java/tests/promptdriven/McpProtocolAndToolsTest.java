@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Unit and integration tests verifying MCP protocol handling, tool registration, and request/response correctness.
+ * Created: 2026-10-22
+ */
 package tests.promptdriven;
 
 import com.fasterxml.jackson.databind.JsonNode;

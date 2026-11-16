@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: UI test suite for DataTable component interactions: sorting, filtering, pagination, and cell content assertion.
+ * Created: 2026-08-15
+ */
 package tests.ui;
 
 import framework.base.BaseTest;

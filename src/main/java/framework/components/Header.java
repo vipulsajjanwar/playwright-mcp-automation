@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Reusable Page Component representing the application header bar with navigation, user menu, and notification area.
+ * Created: 2026-08-15
+ */
 package framework.components;
 
 import com.microsoft.playwright.Locator;

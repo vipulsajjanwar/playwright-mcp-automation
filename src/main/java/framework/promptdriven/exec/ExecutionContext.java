@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Mutable execution state for a prompt-driven test run, holding variables, secrets, and step outcomes.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.exec;
 
 import com.microsoft.playwright.APIRequestContext;

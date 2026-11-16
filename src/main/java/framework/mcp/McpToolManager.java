@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Registry and dispatcher for MCP tools exposed by the framework, mapping tool names to execution handlers.
+ * Created: 2026-08-15
+ */
 package framework.mcp;
 
 import framework.ai.AiConfig;

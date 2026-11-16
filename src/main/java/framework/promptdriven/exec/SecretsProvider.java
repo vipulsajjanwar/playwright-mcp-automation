@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Secure accessor for sensitive values referenced in prompt tests, resolving secrets from environment or vault.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.exec;
 
 import framework.config.ConfigManager;
