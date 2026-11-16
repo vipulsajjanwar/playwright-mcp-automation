@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Random test data generators for names, emails, phone numbers, dates, and UUIDs using Faker.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import java.util.Random;

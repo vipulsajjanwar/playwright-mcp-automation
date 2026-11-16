@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Coordinates test suite execution, thread pool management, and pre/post-execution hooks for the framework.
+ * Created: 2026-08-15
+ */
 package framework.execution;
 
 import framework.config.ConfigManager;

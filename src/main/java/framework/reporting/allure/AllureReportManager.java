@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Coordinates Allure report generation, including serving, opening, and archiving generated reports.
+ * Created: 2026-10-07
+ */
 package framework.reporting.allure;
 
 import framework.config.ReportingConfig;

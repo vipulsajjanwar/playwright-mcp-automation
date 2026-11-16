@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: AI-driven locator self-healing service that proposes alternative element selectors when standard locators fail at runtime.
+ * Created: 2026-08-15
+ */
 package framework.ai;
 
 import framework.utils.JsonUtils;

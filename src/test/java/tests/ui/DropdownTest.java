@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: UI test suite exercising the Dropdown component across select-by-text, select-by-value, and multi-select scenarios.
+ * Created: 2026-08-15
+ */
 package tests.ui;
 
 import framework.base.BaseTest;

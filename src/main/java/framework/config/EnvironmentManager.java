@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Manages active test environment selection, resolution, and switching based on system properties and config files.
+ * Created: 2026-08-15
+ */
 package framework.config;
 
 import framework.constants.FrameworkConstants;

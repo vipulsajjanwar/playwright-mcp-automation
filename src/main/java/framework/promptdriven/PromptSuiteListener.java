@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestNG listener tailored for prompt-driven test suites, managing plan caching, variable scoping, and result collection.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven;
 
 import framework.ai.AiConfig;

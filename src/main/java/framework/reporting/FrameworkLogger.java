@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Unified logging abstraction consolidating console output, step logging, and reporter attachment without duplicate entries.
+ * Created: 2026-10-01
+ */
 package framework.reporting;
 
 import com.microsoft.playwright.Page;

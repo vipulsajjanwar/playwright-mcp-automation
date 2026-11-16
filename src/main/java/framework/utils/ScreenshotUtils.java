@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Screenshot capture utilities providing full-page, element-scoped, and annotated screenshot methods for reporting.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import com.microsoft.playwright.Page;

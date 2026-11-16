@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Value object representing a parsed prompt test file including metadata, variables, and ordered step definitions.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven;
 
 import java.nio.file.Path;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Page Object for the SecureBank login screen, handling credential input, login submission, and authentication state verification.
+ * Created: 2026-10-23
+ */
 package com.securebank.pages;
 
 import com.microsoft.playwright.Locator;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Unit tests for PromptDiscovery validating file scanning, filter patterns, and prompt file loading correctness.
+ * Created: 2026-10-22
+ */
 package tests.promptdriven;
 
 import framework.promptdriven.PromptDiscovery;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Utility methods for ChainTest integration: node creation, step logging, and media attachment helpers.
+ * Created: 2026-09-29
+ */
 package framework.utils;
 
 import com.microsoft.playwright.Page;

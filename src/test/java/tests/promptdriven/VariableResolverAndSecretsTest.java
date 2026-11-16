@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Unit tests for VariableResolver and SecretsProvider validating expression resolution and secure value masking.
+ * Created: 2026-10-22
+ */
 package tests.promptdriven;
 
 import framework.promptdriven.exec.SecretsProvider;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Page Object for user management screens, covering user creation, search, role assignment, and deletion workflows.
+ * Created: 2026-08-15
+ */
 package framework.pages;
 
 import com.microsoft.playwright.Locator;

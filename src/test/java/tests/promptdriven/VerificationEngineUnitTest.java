@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Unit tests for VerificationEngine asserting correct evaluation of text, attribute, and visibility conditions.
+ * Created: 2026-10-22
+ */
 package tests.promptdriven;
 
 import framework.promptdriven.exec.ExecutionContext;

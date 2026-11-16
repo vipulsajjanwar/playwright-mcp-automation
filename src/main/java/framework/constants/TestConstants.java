@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Common test constants shared across test classes: data file names, test user roles, and environment identifiers.
+ * Created: 2026-08-15
+ */
 package framework.constants;
 
 public final class TestConstants {

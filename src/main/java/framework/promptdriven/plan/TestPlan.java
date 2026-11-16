@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Compiled, executable representation of a prompt-driven test, containing ordered PlanStep instances and metadata.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.plan;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

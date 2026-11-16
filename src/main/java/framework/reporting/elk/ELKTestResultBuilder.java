@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Builder class constructing ELK-compatible JSON documents from test result data for Elasticsearch indexing.
+ * Created: 2026-10-01
+ */
 package framework.reporting.elk;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Abstract base class for all UI tests, orchestrating browser and page lifecycle, TestNG hooks, and reporter integration.
+ * Created: 2026-08-15
+ */
 package framework.base;
 
 import com.microsoft.playwright.Page;

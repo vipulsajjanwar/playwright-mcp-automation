@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Value object capturing the outcome (pass/fail/skip), duration, and error details of a single executed step.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.report;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

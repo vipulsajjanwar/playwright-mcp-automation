@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestNG listener that ships test execution events and results to the ELK Stack (Elasticsearch/Logstash) pipeline.
+ * Created: 2026-10-01
+ */
 package framework.listeners;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

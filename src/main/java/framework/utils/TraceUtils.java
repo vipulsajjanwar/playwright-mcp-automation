@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Playwright trace lifecycle utilities: starting, stopping, and exporting traces for failed test diagnostics.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import com.microsoft.playwright.BrowserContext;

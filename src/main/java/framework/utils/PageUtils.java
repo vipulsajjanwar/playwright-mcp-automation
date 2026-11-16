@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Playwright page-level utilities: URL assertion, title verification, cookie management, and scroll helpers.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import com.microsoft.playwright.Locator;

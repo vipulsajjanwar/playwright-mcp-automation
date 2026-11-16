@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Page Object representing the IcedQ Admin application login screen, encapsulating locators and actions for credential entry and form submission.
+ * Created: 2026-09-29
+ */
 package com.icedq.admin;
 
 import com.microsoft.playwright.Locator;

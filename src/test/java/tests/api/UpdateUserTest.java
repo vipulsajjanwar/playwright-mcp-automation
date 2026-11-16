@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: API test suite for user update (PUT/PATCH) endpoints, covering full updates, partial updates, and conflict cases.
+ * Created: 2026-08-15
+ */
 package tests.api;
 
 import framework.api.ApiClient;

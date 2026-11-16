@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Constants for file system paths used by the framework: report directories, screenshot folders, and resource locations.
+ * Created: 2026-08-15
+ */
 package framework.constants;
 
 public final class FileConstants {

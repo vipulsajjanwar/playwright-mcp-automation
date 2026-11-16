@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Integration test validating AI-generated test data quality and format for use in user management workflows.
+ * Created: 2026-08-15
+ */
 package tests.integration;
 
 import framework.ai.AiTestDataGenerator;

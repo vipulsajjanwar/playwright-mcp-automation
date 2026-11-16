@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Tests verifying thread isolation of prompt-driven test execution contexts during parallel test runs.
+ * Created: 2026-10-22
+ */
 package tests.promptdriven;
 
 import framework.promptdriven.PromptFile;

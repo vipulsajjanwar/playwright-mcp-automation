@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Client for communicating with MCP (Model Context Protocol) servers, sending tool call requests and processing responses.
+ * Created: 2026-08-15
+ */
 package framework.mcp;
 
 import com.fasterxml.jackson.databind.JsonNode;

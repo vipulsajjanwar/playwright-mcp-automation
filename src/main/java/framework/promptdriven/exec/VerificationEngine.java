@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Evaluates verification assertions from test plan steps, mapping conditions to Playwright and Java assertions.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.exec;
 
 import com.fasterxml.jackson.databind.JsonNode;

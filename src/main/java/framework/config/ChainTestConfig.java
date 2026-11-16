@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Configuration class for ChainTest reporting integration, supplying project credentials, run identifiers, and dashboard URLs.
+ * Created: 2026-09-29
+ */
 package framework.config;
 
 import framework.constants.FrameworkConstants;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Constants for browser configuration: supported browser names, default viewport dimensions, and launch option keys.
+ * Created: 2026-08-15
+ */
 package framework.constants;
 
 public final class BrowserConstants {

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Core framework-wide constants including version identifiers, default timeouts, and global configuration keys.
+ * Created: 2026-08-15
+ */
 package framework.constants;
 
 import framework.config.ConfigManager;

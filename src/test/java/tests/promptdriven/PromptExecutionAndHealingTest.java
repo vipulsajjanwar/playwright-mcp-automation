@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Integration tests for end-to-end prompt-driven test execution including locator healing and step retry logic.
+ * Created: 2026-10-22
+ */
 package tests.promptdriven;
 
 import framework.ai.AiConfig;

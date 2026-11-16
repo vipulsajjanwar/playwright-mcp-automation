@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Top-level orchestrator that drives the full prompt-driven test lifecycle: discovery, planning, execution, and reporting.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven;
 
 import com.microsoft.playwright.BrowserContext;

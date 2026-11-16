@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Configuration class centralising reporting preferences: enabled reporters, output paths, and notification settings.
+ * Created: 2026-10-01
+ */
 package framework.config;
 
 /**

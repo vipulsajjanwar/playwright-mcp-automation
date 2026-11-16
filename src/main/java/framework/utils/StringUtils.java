@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: String manipulation utilities: trimming, normalisation, truncation, regex helpers, and camelCase conversion.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import java.util.UUID;

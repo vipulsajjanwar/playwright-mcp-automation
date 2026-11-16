@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Executes UI action steps (click, fill, navigate, assert) defined in prompt-driven test plans via Playwright.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.exec;
 
 import com.microsoft.playwright.Locator;

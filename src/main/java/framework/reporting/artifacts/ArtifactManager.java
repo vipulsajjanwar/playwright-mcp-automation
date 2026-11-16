@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Manages test artifact lifecycle: attaching screenshots, videos, and traces to the active reporter context.
+ * Created: 2026-10-01
+ */
 package framework.reporting.artifacts;
 
 import com.microsoft.playwright.BrowserContext;

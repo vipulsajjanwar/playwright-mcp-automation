@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Central report manager coordinating HTML, Allure, and third-party report generation post-suite execution.
+ * Created: 2026-08-15
+ */
 package framework.reporting;
 
 import com.aventstack.extentreports.ExtentReports;

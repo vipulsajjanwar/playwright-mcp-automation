@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Apache POI-based Excel writer for recording test results and generated data back to .xlsx workbooks.
+ * Created: 2026-08-15
+ */
 package framework.excel;
 
 import framework.exceptions.ExcelException;

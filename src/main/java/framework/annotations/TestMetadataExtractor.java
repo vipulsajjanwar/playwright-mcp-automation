@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Extracts and aggregates TestMetadata annotation values from test methods and classes for downstream reporting.
+ * Created: 2026-10-01
+ */
 package framework.annotations;
 
 import org.testng.ITestNGMethod;

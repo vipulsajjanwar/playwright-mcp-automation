@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Context holder for ChainTest reporter integration, storing project key, run ID, and thread-local test node references.
+ * Created: 2026-09-29
+ */
 package framework.reporting;
 
 import framework.listeners.ChainTestListener;

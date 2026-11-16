@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: End-to-end UI test suite for user creation workflows covering form validation, success paths, and duplicate detection.
+ * Created: 2026-08-15
+ */
 package tests.ui;
 
 import framework.annotations.CustomTest;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestReporter implementation persisting test execution results to a configured relational database.
+ * Created: 2026-10-01
+ */
 package framework.reporting.reporters;
 
 import framework.config.ReportingConfig;

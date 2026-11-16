@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Deterministic mock implementation of LlmClient for offline unit tests and CI environments without real AI endpoints.
+ * Created: 2026-10-22
+ */
 package framework.ai.llm;
 
 import framework.utils.JsonUtils;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Immutable value object representing a single executable step in a compiled test plan.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.plan;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

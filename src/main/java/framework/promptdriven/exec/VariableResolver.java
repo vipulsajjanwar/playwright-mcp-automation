@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Resolves variable references and expressions within prompt test step definitions using runtime context values.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.exec;
 
 import framework.utils.JsonUtils;

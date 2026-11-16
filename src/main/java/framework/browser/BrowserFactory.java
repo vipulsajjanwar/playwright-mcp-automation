@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Factory class that instantiates Playwright Browser objects for Chromium, Firefox, and WebKit based on configuration.
+ * Created: 2026-08-15
+ */
 package framework.browser;
 
 import com.microsoft.playwright.Browser;

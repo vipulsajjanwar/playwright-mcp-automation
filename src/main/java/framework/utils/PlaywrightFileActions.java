@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Playwright-specific file action helpers for download interception, upload triggering, and file path resolution.
+ * Created: 2026-10-07
+ */
 package framework.utils;
 
 import com.microsoft.playwright.*;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: UI test suite for the SecureBank login screen covering valid login, invalid credentials, and session timeout.
+ * Created: 2026-10-23
+ */
 package tests.securebank;
 
 import com.securebank.pages.SecureBankLoginPage;

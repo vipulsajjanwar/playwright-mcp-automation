@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Value object representing a structured test execution report payload for ingestion by the ELK Stack.
+ * Created: 2026-10-01
+ */
 package framework.reporting;
 
 import com.microsoft.playwright.APIRequest;

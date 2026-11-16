@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Enumeration of supported action types (CLICK, FILL, NAVIGATE, ASSERT, API_CALL, etc.) in prompt-driven test plans.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.plan;
 
 import java.util.Locale;

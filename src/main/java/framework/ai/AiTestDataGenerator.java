@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: AI-based test data generator that creates realistic, context-aware input data sets for parameterised and data-driven tests.
+ * Created: 2026-08-15
+ */
 package framework.ai;
 
 import framework.utils.JsonUtils;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Provides assertion-style methods for verifying database state against expected values after test actions.
+ * Created: 2026-08-15
+ */
 package framework.database;
 
 import framework.exceptions.DatabaseException;

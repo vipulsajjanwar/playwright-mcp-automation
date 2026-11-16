@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Data-driven login test reading credential sets from Excel to validate multiple user scenarios in one suite.
+ * Created: 2026-08-15
+ */
 package tests.integration;
 
 import framework.base.BaseTest;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Utility methods for programmatic Allure annotations: attaching files, adding steps, and setting categories.
+ * Created: 2026-09-28
+ */
 package framework.utils;
 
 import framework.config.ConfigManager;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestNG IRetryAnalyzer implementation controlling automatic test retry logic based on configurable attempt counts.
+ * Created: 2026-08-15
+ */
 package framework.execution;
 
 import framework.config.ConfigManager;

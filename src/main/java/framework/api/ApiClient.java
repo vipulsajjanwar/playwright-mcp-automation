@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Core REST API client built on RestAssured, providing centralised request execution with authentication, logging, and timeout handling.
+ * Created: 2026-08-15
+ */
 package framework.api;
 
 import framework.exceptions.ApiException;

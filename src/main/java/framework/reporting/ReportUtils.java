@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Utility methods for report file management, path construction, timestamp formatting, and report artifact cleanup.
+ * Created: 2026-08-15
+ */
 package framework.reporting;
 
 import com.microsoft.playwright.Page;

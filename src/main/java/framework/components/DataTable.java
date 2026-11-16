@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Reusable Page Component encapsulating interactions with HTML data tables: row reading, column extraction, and cell assertions.
+ * Created: 2026-08-15
+ */
 package framework.components;
 
 import com.microsoft.playwright.Locator;

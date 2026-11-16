@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Thread-local browser lifecycle manager ensuring each test thread has a dedicated, clean Browser instance.
+ * Created: 2026-08-15
+ */
 package framework.browser;
 
 import com.microsoft.playwright.Browser;

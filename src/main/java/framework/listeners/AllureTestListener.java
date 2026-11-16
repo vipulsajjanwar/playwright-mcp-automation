@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestNG listener that integrates Allure reporting hooks for test start, finish, failure, and step events.
+ * Created: 2026-09-28
+ */
 package framework.listeners;
 
 import ch.qos.logback.core.status.Status;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Reusable Page Component for dropdown and select controls, providing select-by-text, value, and index with assertion support.
+ * Created: 2026-08-15
+ */
 package framework.components;
 
 import com.microsoft.playwright.Locator;

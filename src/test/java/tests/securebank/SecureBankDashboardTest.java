@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: UI test suite for the SecureBank Dashboard: navigation assertions, widget loading, and account summary display.
+ * Created: 2026-10-23
+ */
 package tests.securebank;
 
 import com.securebank.pages.AccountsPage;

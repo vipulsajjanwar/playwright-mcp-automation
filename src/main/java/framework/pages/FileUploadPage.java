@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Page Object for file upload functionality, encapsulating input element targeting, file attachment, and upload verification.
+ * Created: 2026-08-15
+ */
 package framework.pages;
 
 import com.microsoft.playwright.Locator;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: General-purpose date/time utilities for parsing, formatting, comparison, and offset calculations.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import java.time.LocalDateTime;

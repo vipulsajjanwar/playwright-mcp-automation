@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Serialises prompt-driven test run results to JSON and HTML summary reports for archival and review.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.report;
 
 import framework.promptdriven.exec.ExecutionContext;

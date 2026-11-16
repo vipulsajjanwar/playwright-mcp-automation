@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Utility class for Excel file manipulation: cell type handling, sheet navigation, and data normalisation.
+ * Created: 2026-08-15
+ */
 package framework.excel;
 
 import framework.exceptions.ExcelException;

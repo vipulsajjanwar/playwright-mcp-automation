@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestReporter implementation generating interactive ExtentReports HTML reports with screenshots and step logs.
+ * Created: 2026-10-01
+ */
 package framework.reporting.reporters;
 
 import com.aventstack.extentreports.ExtentReports;

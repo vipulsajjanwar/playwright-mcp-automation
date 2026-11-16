@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Utility class that extracts and resolves TestInfo annotation data at runtime for use by reporters and listeners.
+ * Created: 2026-10-01
+ */
 package framework.annotations;
 
 import org.testng.ITestResult;

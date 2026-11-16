@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Date and time formatting utilities tailored to framework reporting, log stamping, and timestamp generation.
+ * Created: 2026-09-28
+ */
 package framework.utils;
 
 import com.cronutils.model.Cron;

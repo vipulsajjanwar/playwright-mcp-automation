@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Environment-specific configuration holder mapping base URLs, credentials, and service endpoints per deployment environment.
+ * Created: 2026-10-07
+ */
 package framework.config;
 
 import io.github.cdimascio.dotenv.Dotenv;

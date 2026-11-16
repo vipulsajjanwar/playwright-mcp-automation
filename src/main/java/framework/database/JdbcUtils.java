@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: JDBC utility class offering low-level query execution, result-set mapping, and connection lifecycle helpers.
+ * Created: 2026-08-15
+ */
 package framework.database;
 
 import framework.exceptions.DatabaseException;

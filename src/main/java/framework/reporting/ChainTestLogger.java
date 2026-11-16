@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Logging bridge that routes framework log messages to the ChainTest real-time reporting pipeline.
+ * Created: 2026-09-29
+ */
 package framework.reporting;
 
 import framework.listeners.ChainTestListener;

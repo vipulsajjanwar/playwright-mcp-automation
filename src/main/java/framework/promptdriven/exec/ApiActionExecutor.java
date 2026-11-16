@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Executes API action steps defined in prompt-driven test plans using the framework REST client.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.exec;
 
 import com.fasterxml.jackson.databind.JsonNode;

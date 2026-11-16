@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Assertion helper utilities providing human-readable soft and hard assertion wrappers for framework tests.
+ * Created: 2026-08-15
+ */
 package framework.utils;
 
 import framework.exceptions.FrameworkException;

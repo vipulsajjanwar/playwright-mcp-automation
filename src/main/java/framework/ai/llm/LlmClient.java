@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Contract interface defining the uniform API for interacting with any supported Large Language Model provider.
+ * Created: 2026-10-22
+ */
 package framework.ai.llm;
 
 /**

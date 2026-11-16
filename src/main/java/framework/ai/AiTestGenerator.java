@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: AI-powered test generation utility that scaffolds new test cases from natural-language feature descriptions.
+ * Created: 2026-08-15
+ */
 package framework.ai;
 
 import framework.utils.JsonUtils;

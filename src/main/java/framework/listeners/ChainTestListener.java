@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestNG listener bridging framework events to ChainTest real-time reporting dashboard.
+ * Created: 2026-09-29
+ */
 package framework.listeners;
 
 import com.aventstack.chaintest.domain.Embed;

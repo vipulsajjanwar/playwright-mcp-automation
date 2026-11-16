@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestNG test class that executes prompt-driven test plans discovered and compiled at runtime by the framework.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven;
 
 import com.microsoft.playwright.BrowserContext;

@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Constants for API testing: endpoint paths, HTTP status codes, default headers, and timeout values.
+ * Created: 2026-08-15
+ */
 package framework.constants;
 
 public final class ApiConstants {

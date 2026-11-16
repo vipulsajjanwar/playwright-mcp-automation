@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: TestReporter implementation writing colour-coded test progress and results to standard console output.
+ * Created: 2026-10-01
+ */
 package framework.reporting.reporters;
 
 import framework.annotations.TestMetadata;

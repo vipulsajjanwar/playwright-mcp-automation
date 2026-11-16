@@ -1,3 +1,10 @@
+/**
+ * Project: Playwright Java Automation Framework
+ * Author: Vipul Sajjanwar
+ * Role: Senior Test Automation Engineer
+ * Description: Service coordinating AI plan generation, caching, and retrieval for prompt-driven tests.
+ * Created: 2026-10-22
+ */
 package framework.promptdriven.plan;
 
 import com.fasterxml.jackson.databind.JsonNode;
