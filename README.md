@@ -149,67 +149,97 @@ The framework is architected as a layered, modular system ensuring high test iso
 
 ---
 
-## 4. Architecture & Workflow Diagrams
+## ## 4. Architecture & Workflow Diagrams
+
+This section illustrates the framework architecture, execution lifecycle, browser initialization, and configuration resolution. The diagrams provide a visual overview of how execution flows through the framework, from test initiation to reporting and cleanup.
 
 ### 4.1. High-Level Architecture Diagram
 
 ```mermaid
+%%{init: {
+  "theme": "base",
+  "flowchart": {
+    "nodeSpacing": 12,
+    "rankSpacing": 18,
+    "diagramPadding": 5,
+    "curve": "linear",
+    "htmlLabels": true,
+    "useMaxWidth": true
+  },
+  "themeVariables": {
+    "fontSize": "10px",
+    "fontFamily": "Arial"
+  }
+}}%%
 graph TB
     subgraph Trigger ["Execution Triggers"]
-        CLI["Maven CLI / Developer Terminal"]
-        CI["Jenkins Pipeline / GitHub Actions"]
-        MCP_Trigger["External AI Agent (via MCP JSON-RPC)"]
+        CLI["Maven CLI / Terminal"]
+        CI["Jenkins / GitHub Actions"]
+        MCP["External AI Agent (MCP JSON-RPC)"]
     end
 
     subgraph Core ["Framework Core & Engine"]
-        Runner["TestNG Test Runner (Surefire + AspectJ)"]
-        Listeners["TestListener & SuiteListener"]
-        Context["ThreadLocal TestContext & Metadata Engine"]
-        Config["ConfigManager & Multi-Tier Precedence Engine"]
+        Runner["TestNG Runner (Surefire + AspectJ)"]
+        Listeners["TestListener / SuiteListener"]
+        Context["ThreadLocal TestContext & Metadata"]
+        Config["ConfigManager & Config Precedence"]
     end
 
-    subgraph Automation ["Execution Subsystems"]
-        Playwright["Playwright UI Engine (Chromium/Firefox/WebKit/Edge)"]
-        RestAssured["REST Assured API Engine"]
-        Database["JDBC Query Engine (HikariCP / H2 / Postgres)"]
-        POI["Apache POI Excel Data Provider"]
-        AI_Engines["AI Engines (Locator, Failure, Data, Skeleton)"]
+    subgraph Automation ["Execution Engines"]
+        Playwright["Playwright UI (Chromium / Firefox / WebKit / Edge)"]
+        API["REST Assured API Engine"]
+        DB["JDBC Engine (HikariCP / H2 / Postgres)"]
+        POI["Apache POI Excel Provider"]
+        AI["AI Engines (Locator / Failure / Data / Skeleton)"]
     end
 
-    subgraph Observability ["Reporting & Observability Sinks"]
-        Allure["Allure Report (Dynamic History Stitching)"]
+    subgraph Observability ["Reporting & Observability"]
+        Allure["Allure (History & Trends)"]
         Extent["ExtentReports 5 (HTML Dashboard)"]
-        Chain["ChainTest (Tree & Email Reports)"]
-        ELK["Elasticsearch & Kibana Observability"]
-        DB_Sink["Relational Database (test_results table)"]
-        Logs["Logback Unified File & Console Logs"]
-        Artifacts["Playwright Traces, Screenshots & Videos"]
+        Chain["ChainTest (Tree / Email Reports)"]
+        ELK["Elasticsearch / Kibana"]
+        DBResult["Relational DB (test_results)"]
+        Logs["Logback (File / Console)"]
+        Artifacts["Traces / Screenshots / Videos"]
     end
 
     subgraph Notifications ["Notifications"]
-       Email["Notify on Email"]
+        Email["Email Notifications"]
     end
 
     CLI --> Runner
     CI --> Runner
-    MCP_Trigger --> Core
+    MCP --> Core
+
     Runner --> Listeners
     Listeners --> Context
     Config -.-> Core
+
     Context --> Automation
     Automation --> Observability
     Observability --> Notifications
+
+    style Trigger fill:#e8f1ff,stroke:#4b83c3,color:#172b4d
+    style Core fill:#eaf5ed,stroke:#47976a,color:#183b29
+    style Automation fill:#fff4df,stroke:#d69b35,color:#543b10
+    style Observability fill:#f1eaff,stroke:#9671c9,color:#382354
+    style Notifications fill:#ffecec,stroke:#d46b6b,color:#542525
 ```
 
 ### 4.2. Test Execution & Lifecycle Flowchart
 
+This diagram illustrates the complete TestNG execution lifecycle, including initialization, test execution, failure analysis, retries, reporting, and resource cleanup.
+
 ```mermaid
 %%{init: {
+  "theme": "base",
   "flowchart": {
-    "nodeSpacing": 15,
-    "rankSpacing": 20,
+    "nodeSpacing": 12,
+    "rankSpacing": 18,
+    "diagramPadding": 5,
     "curve": "linear",
-    "htmlLabels": true
+    "htmlLabels": true,
+    "useMaxWidth": true
   },
   "themeVariables": {
     "fontSize": "10px",
@@ -217,51 +247,64 @@ graph TB
   }
 }}%%
 flowchart TD
-    A[Start: 'mvn test -DsuiteXmlFile=...'] --> B[ConfigManager Loads System Props, Env, Files]
-    B --> C[TestNG Launches Suite]
-    C --> D[SuiteListener.onStart / ReportPathManager Init Paths]
-    D --> E[AllureHistoryManager Copies Previous History Trends]
-    E --> F[Test Method Setup: BaseTest.@BeforeMethod]
-    F --> G[BrowserManager Creates ThreadLocal Playwright, Browser, Context, Page]
-    G --> H[TraceUtils Starts Playwright Tracing]
-    H --> I[TestListener.onTestStart Creates ThreadLocal TestContext]
-    I --> J[Execute Test Actions & Assertions]
-    
-    J --> K{Test Outcome?}
-    
-    K -- PASS --> L[TestListener.onTestSuccess]
-    L --> M[Mark TestContext PASSED & Record Duration]
-    
-    K -- FAIL --> N[TestListener.onTestFailure]
-    N --> O[ArtifactManager Captures Screenshot, Trace, Video, HTML]
-    O --> P[AiFailureAnalyzer Diagnoses Root Cause]
-    P --> Q[Mark TestContext FAILED & RetryAnalyzer Evaluates Retry]
-    
-    K -- SKIP --> R[TestListener.onTestSkipped]
-    R --> S[Mark TestContext SKIPPED]
-    
-    M --> T[ReportingManager Dispatches to All Active Reporters]
+    A(["Start: mvn test"]) --> B["ConfigManager: Load Configuration"]
+    B --> C["TestNG: Launch Suite"]
+    C --> D["SuiteListener.onStart: Initialize Paths"]
+    D --> E["AllureHistoryManager: Restore History"]
+    E --> F["BaseTest.@BeforeMethod: Setup"]
+    F --> G["BrowserManager: Initialize ThreadLocal Browser"]
+    G --> H["TraceUtils: Start Tracing"]
+    H --> I["TestListener.onTestStart: Create TestContext"]
+    I --> J["Execute Test Actions & Assertions"]
+
+    J --> K{"Test Outcome?"}
+
+    K -->|PASS| L["TestListener.onTestSuccess"]
+    L --> M["Mark PASSED & Record Duration"]
+
+    K -->|FAIL| N["TestListener.onTestFailure"]
+    N --> O["ArtifactManager: Capture Screenshot / Trace / Video / HTML"]
+    O --> P["AiFailureAnalyzer: Diagnose Root Cause"]
+    P --> Q["Mark FAILED & RetryAnalyzer: Evaluate Retry"]
+
+    K -->|SKIP| R["TestListener.onTestSkipped"]
+    R --> S["Mark SKIPPED"]
+
+    M --> T["ReportingManager: Dispatch Results"]
     Q --> T
     S --> T
-    
-    T --> U[BaseTest AfterMethod Closes Page/Context & Clears ThreadLocals]
-    U --> V{More Tests in Suite?}
-    V -- Yes --> F
-    V -- No --> W[SuiteListener.onFinish & BaseTest.@AfterSuite]
-    W --> X[ReportingManager Flushes Extent, ChainTest, ELK, DB]
-    X --> Y[AllureReportManager Invokes Allure CLI Generate & Backs up History]
-    Y --> Z[End Execution]
+
+    T --> U["BaseTest.@AfterMethod: Close Resources & Clear ThreadLocals"]
+    U --> V{"More Tests?"}
+
+    V -->|Yes| F
+    V -->|No| W["SuiteListener.onFinish / @AfterSuite"]
+    W --> X["ReportingManager: Flush Extent / ChainTest / ELK / DB"]
+    X --> Y["AllureReportManager: Generate Report & Backup History"]
+    Y --> Z(["End Execution"])
+
+    style K fill:#fff4df,stroke:#d69b35,color:#543b10
+    style V fill:#fff4df,stroke:#d69b35,color:#543b10
+    style M fill:#e4f5e9,stroke:#47976a,color:#183b29
+    style Q fill:#ffe9e9,stroke:#d46b6b,color:#542525
+    style S fill:#f1eaff,stroke:#9671c9,color:#382354
+    style Z fill:#e4f5e9,stroke:#47976a,color:#183b29
 ```
 
 ### 4.3. Browser Lifecycle & Resolution Flowchart
 
+This diagram explains how the framework resolves browser configuration, selects the appropriate browser engine, applies launch options, initializes the browser context, and binds browser objects to ThreadLocal storage.
+
 ```mermaid
 %%{init: {
+  "theme": "base",
   "flowchart": {
-    "nodeSpacing": 15,
-    "rankSpacing": 20,
+    "nodeSpacing": 12,
+    "rankSpacing": 18,
+    "diagramPadding": 5,
     "curve": "linear",
-    "htmlLabels": true
+    "htmlLabels": true,
+    "useMaxWidth": true
   },
   "themeVariables": {
     "fontSize": "10px",
@@ -269,43 +312,83 @@ flowchart TD
   }
 }}%%
 flowchart TD
-    Start([Initialize Browser Session]) --> CheckConfig{Check 'browser' Property}
-    
-    CheckConfig -- "Explicit System Prop / Config" --> Normalize[Normalize Browser String]
-    CheckConfig -- "Not Specified" --> Default[Fallback: 'chromium']
-    
-    Normalize --> SwitchBrowser{Select Engine}
-    Default --> SwitchBrowser
-    
-    SwitchBrowser -- "chromium" --> LaunchChromium["Playwright.chromium().launch()"]
-    SwitchBrowser -- "chrome" --> LaunchChrome["Playwright.chromium().launch(channel='chrome')"]
-    SwitchBrowser -- "msedge" --> LaunchEdge["Playwright.chromium().launch(channel='msedge')"]
-    SwitchBrowser -- "firefox" --> LaunchFirefox["Playwright.firefox().launch()"]
-    SwitchBrowser -- "webkit" --> LaunchWebKit["Playwright.webkit().launch()"]
-    
-    LaunchChromium --> ApplyOptions[Apply Headless, SlowMo, Maximized Window]
-    LaunchChrome --> ApplyOptions
-    LaunchEdge --> ApplyOptions
-    LaunchFirefox --> ApplyOptions
-    LaunchWebKit --> ApplyOptions
-    
-    ApplyOptions --> CreateContext[BrowserContextManager.createContext]
-    CreateContext --> ConfigContext[Configure Viewport, Timezone, Locale, Video Recording]
-    ConfigContext --> CreatePage[context.newPage]
-    CreatePage --> BindThreadLocal[Store in ThreadLocal BrowserContext & Page]
-    BindThreadLocal --> Ready([Ready for Test Execution])
+    Start(["Initialize Browser Session"])
+    Start --> Check{"Resolve Browser Property"}
+
+    Check -->|Configured| Normalize["Normalize Browser Name"]
+    Check -->|Not Configured| Default["Default: Chromium"]
+
+    Normalize --> Select{"Select Browser Engine"}
+    Default --> Select
+
+    Select -->|chromium| Chromium["Playwright.chromium().launch()"]
+    Select -->|chrome| Chrome["launch(channel='chrome')"]
+    Select -->|msedge| Edge["launch(channel='msedge')"]
+    Select -->|firefox| Firefox["Playwright.firefox().launch()"]
+    Select -->|webkit| WebKit["Playwright.webkit().launch()"]
+
+    Chromium --> Options["Apply Launch Options"]
+    Chrome --> Options
+    Edge --> Options
+    Firefox --> Options
+    WebKit --> Options
+
+    Options --> Context["BrowserContextManager.createContext()"]
+    Context --> Configure["Configure Viewport / Timezone / Locale / Video"]
+    Configure --> Page["context.newPage()"]
+    Page --> Bind["Bind ThreadLocal Browser / Context / Page"]
+    Bind --> Ready(["Ready for Test Execution"])
+
+    style Select fill:#fff4df,stroke:#d69b35,color:#543b10
+    style Check fill:#fff4df,stroke:#d69b35,color:#543b10
+    style Ready fill:#e4f5e9,stroke:#47976a,color:#183b29
 ```
 
 ### 4.4. Configuration Resolution Hierarchy
 
+The framework uses a multi-tier configuration resolution strategy. Values are resolved according to the following precedence, with the first available value taking priority.
+
 ```mermaid
-graph TD
-    A["1. JVM System Property (-Dkey=value)"] -->|If Missing| B["2. OS Environment Variable (KEY / KEY_FORMAT)"]
-    B -->|If Missing| C["3. Environment Properties File (src/test/resources/config/<env>.properties)"]
-    C -->|If Missing| D["4. Default Configuration File (src/test/resources/config/config.properties)"]
-    D -->|If Missing| E["5. Dotenv Configuration (.env.<env> / .env via dotenv-java)"]
-    E -->|If Missing| F["6. In-Code Hardcoded Default Fallback Value"]
+%%{init: {
+  "theme": "base",
+  "flowchart": {
+    "nodeSpacing": 10,
+    "rankSpacing": 16,
+    "diagramPadding": 5,
+    "curve": "linear",
+    "htmlLabels": true,
+    "useMaxWidth": true
+  },
+  "themeVariables": {
+    "fontSize": "10px",
+    "fontFamily": "Arial"
+  }
+}}%%
+flowchart TD
+    A["1. JVM System Property<br/>(-Dkey=value)"]
+    B["2. OS Environment Variable<br/>(KEY / KEY_FORMAT)"]
+    C["3. Environment Properties File<br/>(config/&lt;env&gt;.properties)"]
+    D["4. Default Properties File<br/>(config.properties)"]
+    E["5. Dotenv Configuration<br/>(.env.&lt;env&gt; / .env)"]
+    F["6. Hardcoded Default Value"]
+
+    A -->|If Missing| B
+    B -->|If Missing| C
+    C -->|If Missing| D
+    D -->|If Missing| E
+    E -->|If Missing| F
+
+    style A fill:#e4f5e9,stroke:#47976a,color:#183b29
+    style B fill:#e8f1ff,stroke:#4b83c3,color:#172b4d
+    style C fill:#e8f1ff,stroke:#4b83c3,color:#172b4d
+    style D fill:#e8f1ff,stroke:#4b83c3,color:#172b4d
+    style E fill:#fff4df,stroke:#d69b35,color:#543b10
+    style F fill:#f1eaff,stroke:#9671c9,color:#382354
 ```
+
+**Configuration Priority:** JVM System Properties → Environment Variables → Environment Properties → Default Properties → Dotenv → Hardcoded Defaults.
+
+This ensures that runtime configuration can override environment-specific and framework-level defaults without requiring source code changes.
 
 ---
 
