@@ -198,6 +198,7 @@ graph TB
     Config -.-> Core
     Context --> Automation
     Automation --> Observability
+    Observability --> Notifications
 ```
 
 ### 4.2. Test Execution & Lifecycle Flowchart
