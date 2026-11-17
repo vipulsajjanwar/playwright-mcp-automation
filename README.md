@@ -204,6 +204,18 @@ graph TB
 ### 4.2. Test Execution & Lifecycle Flowchart
 
 ```mermaid
+%%{init: {
+  "flowchart": {
+    "nodeSpacing": 15,
+    "rankSpacing": 20,
+    "curve": "linear",
+    "htmlLabels": true
+  },
+  "themeVariables": {
+    "fontSize": "10px",
+    "fontFamily": "Arial"
+  }
+}}%%
 flowchart TD
     A[Start: 'mvn test -DsuiteXmlFile=...'] --> B[ConfigManager Loads System Props, Env, Files]
     B --> C[TestNG Launches Suite]
@@ -244,6 +256,18 @@ flowchart TD
 ### 4.3. Browser Lifecycle & Resolution Flowchart
 
 ```mermaid
+%%{init: {
+  "flowchart": {
+    "nodeSpacing": 15,
+    "rankSpacing": 20,
+    "curve": "linear",
+    "htmlLabels": true
+  },
+  "themeVariables": {
+    "fontSize": "10px",
+    "fontFamily": "Arial"
+  }
+}}%%
 flowchart TD
     Start([Initialize Browser Session]) --> CheckConfig{Check 'browser' Property}
     
