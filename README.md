@@ -187,7 +187,7 @@ graph TB
     end
 
     subgraph Notifications ["Notifications"]
-       Notifications["Notify on Email"]
+       Email["Notify on Email"]
     end
 
     CLI --> Runner
