@@ -186,7 +186,7 @@ graph TB
         Artifacts["Playwright Traces, Screenshots & Videos"]
     end
 
-    subgraph Observability ["Notifications"]
+    subgraph Notifications ["Notifications"]
        Notifications["Notify on Email"]
     end
 
