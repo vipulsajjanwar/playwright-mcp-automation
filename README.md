@@ -227,7 +227,7 @@ flowchart TD
     Q --> T
     S --> T
     
-    T --> U[BaseTest.@AfterMethod Closes Page/Context & Clears ThreadLocals]
+    T --> U[BaseTest AfterMethod Closes Page/Context & Clears ThreadLocals]
     U --> V{More Tests in Suite?}
     V -- Yes --> F
     V -- No --> W[SuiteListener.onFinish & BaseTest.@AfterSuite]
