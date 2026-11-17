@@ -1,4 +1,4 @@
-# Enterprise Playwright Java Hybrid Automation Framework
+# Playwright Java Hybrid Automation Framework
 
 [![Java Version](https://img.shields.io/badge/Java-21%2B-blue.svg?logo=openjdk)](https://www.oracle.com/java/)
 [![Playwright](https://img.shields.io/badge/Playwright-1.49.0-green.svg?logo=playwright)](https://playwright.dev/java/)
@@ -11,7 +11,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Supported-2496ED.svg?logo=docker)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
 
-An enterprise-grade, full-stack test automation framework developed with **Java 21, Playwright Java, TestNG, REST Assured, JDBC / HikariCP, Apache POI, ExtentReports, Allure (with automated cross-run history stitching), ChainTest, Reporting-Labs, SLF4J / Logback, Docker, Jenkins CI/CD, Artificial Intelligence (AI) test generation & failure diagnostics, and Model Context Protocol (MCP)** tool execution.
+An production-grade, full-stack test automation framework developed with **Java 21, Playwright Java, TestNG, REST Assured, JDBC / HikariCP, Apache POI, ExtentReports, Allure (with automated cross-run history stitching), ChainTest, Reporting-Labs, SLF4J / Logback, Docker, Jenkins CI/CD, Artificial Intelligence (AI) test generation & failure diagnostics, and Model Context Protocol (MCP)** tool execution.
 
 ---
 
@@ -123,12 +123,12 @@ The framework is architected as a layered, modular system ensuring high test iso
 │  ThreadLocal<Playwright>         │           │    (Fail-Safe Event Dispatcher)  │
 │  ThreadLocal<Browser>            │           └────────────────┬─────────────────┘
 │  ThreadLocal<BrowserContext>     │                            │
-│  ThreadLocal<Page>               │     ┌──────────────┬───────┴──────┬──────────────┬──────────────┐
-└────────────────┬─────────────────┘     ▼              ▼              ▼              ▼              ▼
-                 │                 AllureReporter ExtentReporter ChainReporter  ELKReporter    DBReporter
-                 ▼                       │              │              │              │              │
-┌──────────────────────────────────┐Allure XML/HTML Extent HTML   ChainTest HTML Elasticsearch   PostgreSQL/H2
-│  PAGE OBJECTS & UI COMPONENTS    │ (With History) (Dashboard)   (Tree & Email) (JSON Index)    (JDBC Pool)
+│  ThreadLocal<Page>               │        ┌──────────────┬───────┴──────┬──────────────┬──────────────┐
+└────────────────┬─────────────────┘        ▼              ▼              ▼              ▼              ▼
+                 │                      AllureReporter ExtentReporter ChainReporter  ELKReporter    DBReporter
+                 ▼                          │              │              │              │              │
+┌──────────────────────────────────┐    Allure XML/HTML Extent HTML   ChainTest HTML Elasticsearch   PostgreSQL/H2
+│  PAGE OBJECTS & UI COMPONENTS    │    (With History)  (Dashboard)   (Tree & Email) (JSON Index)    (JDBC Pool)
 │  BasePage, LoginPage, DataTable  │
 └──────────────────────────────────┘
 ```
@@ -184,6 +184,10 @@ graph TB
         DB_Sink["Relational Database (test_results table)"]
         Logs["Logback Unified File & Console Logs"]
         Artifacts["Playwright Traces, Screenshots & Videos"]
+    end
+
+    subgraph Observability ["Notifications"]
+       Notifications["Notify on Email"]
     end
 
     CLI --> Runner
